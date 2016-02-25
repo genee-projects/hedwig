@@ -1,21 +1,35 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from smtpd import SMTPServer
+from secure_smtpd import SMTPServer
 
-import dns.resolver, asyncore, sys, smtplib
+import dns.resolver, asyncore, smtplib
 
 
-# 初始化 GServer, 继承自 SMTPServer
-class GServer(SMTPServer):
+# 登录验证
+class LoginValidator(object):
+
+    # 验证
+    def validate(self, username, password):
+
+        print(username)
+        print(password)
+        return True
+
+        if username == 'foo' and password == 'bar':
+            return True
+
+        return False
+
+
+class SSLSMTPServer(SMTPServer):
 
     config = []
 
     dns = {}
 
     def process_message(self, peer, mailfrom, rcpttos, data, **kwargs):
-
-        # 直接发送
+          # 直接发送
 
         # 单独发送给 @geneegroup.com 的邮件, 特殊处理
         if (len(rcpttos) == 1) and ('@geneegroup.com' in rcpttos[0]):
@@ -41,9 +55,20 @@ class GServer(SMTPServer):
 
 
 def main():
-    _ = GServer(('0.0.0.0', 25), None)
+
     try:
-        asyncore.loop()
+        server = SMTPServer(
+            ('0.0.0.0', 25),
+            ('0.0.0.0', 465),
+            require_authentication=True,
+            ssl=True,
+            certfile='examples/server.crt',
+            keyfile='examples/server.key',
+            credential_validator=LoginValidator()
+        )
+
+        server.run()
+
     except KeyboardInterrupt:
         pass
 
