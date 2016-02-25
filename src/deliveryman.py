@@ -41,7 +41,7 @@ class GServer(SMTPServer):
 
 
 def main():
-    _ = GServer(('localhost', 25), None)
+    _ = GServer(('0.0.0.0', 25), None)
     try:
         asyncore.loop()
     except KeyboardInterrupt:
