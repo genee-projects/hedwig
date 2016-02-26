@@ -1,5 +1,6 @@
 deliveryman:
-  container_name: deliveryman
+  container_name: mailman
+  restart: always
   build: .
   ports:
     - 172.17.42.1:25:25
