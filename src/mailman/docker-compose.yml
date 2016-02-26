@@ -2,4 +2,4 @@ deliveryman:
   container_name: deliveryman
   build: .
   ports:
-    - 127.0.0.1:25:25
+    - 172.17.42.1:25:25

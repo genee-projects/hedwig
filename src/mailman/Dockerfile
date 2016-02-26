@@ -7,10 +7,8 @@ RUN apk update && \
 	apk del build-dependencies && \
 	rm -rf /var/cache/apk/*
 
-COPY src/* /usr/app/
-
-RUN pip3 install -r /usr/app/requirements.txt
+COPY mailman.py /usr/app/
 
 EXPOSE 25
 
-ENTRYPOINT ["/usr/bin/python3", "/usr/app/deliveryman.py"]
+ENTRYPOINT ["/usr/bin/python3", "/usr/app/mailman.py"]
