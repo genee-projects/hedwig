@@ -1,6 +1,6 @@
-# tunnel
+# hedwig
 
-一个用来进行邮件发送队列的工具.
+hedwig (海德薇, 哈利波特的猫头鹰) 一个用来进行邮件发送队列的工具.
 
 分为 `mailman` 和 `postoffice` 两部分组成.
 
