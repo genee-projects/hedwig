@@ -52,14 +52,11 @@ def post():
             # 进行遍历, 获取到所有的.
             domain = r.split('@')[-1]
 
-            print(domain)
-
             if domain not in app.dns:
                 # 获取 MX 记录, 并且存储
                 answers = dns.resolver.query(domain, 'MX')
                 mx_domain = str(answers[0].exchange)
 
-                print(mx_domain)
                 app.dns[domain] = mx_domain
 
             mx_domain = app.dns.get(domain)
