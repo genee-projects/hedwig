@@ -1,4 +1,4 @@
-deliveryman:
+mailman:
   container_name: mailman
   restart: always
   build: .

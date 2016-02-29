@@ -1,8 +1,8 @@
-deliveryman:
-  container_name: mailman
+postoffice:
+  container_name: postoffice
   restart: always
   build: .
   ports:
-    -  80:80
+    - 80:80
   volumes:
     - ./:/usr/app/
