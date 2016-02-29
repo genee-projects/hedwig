@@ -5,4 +5,4 @@ mailman:
   ports:
     - 172.17.42.1:25:25
   volumes:
-    - ./:/usr/app/c
+    - ./:/usr/app/
