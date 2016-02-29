@@ -78,7 +78,9 @@ hedwig (海德薇, 哈利波特的猫头鹰) 一个用来进行邮件发送队�
 
 4. 在宿主机中, 进入该项目的 `src/mailman`. 修改 `docker-compose.yml` 配置中的 `172.17.42.1:25:25` 中的 IP 地址为 **步骤 1** 中明确的网卡地址
 
-5. 执行 `docker-compose up -d` 进行 `mailman` 部署
+5. 在部署  `postoffice` 中的服务器中执行 `src/postoffice/key_generator.py` 并根据提示, 生成当前服务器 `fqdn` 对应的配置内容, 按照要求, 填写结果到当前宿主机的 `src/mailman/config.yml` 中
+
+6. 执行 `docker-compose up -d` 进行 `mailman` 部署
 
 ### postoffice
 
