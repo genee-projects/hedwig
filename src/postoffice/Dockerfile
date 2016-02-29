@@ -11,7 +11,7 @@ EXPOSE 80
 
 VOLUME ["/usr/app"]
 
-ONBUILD COPY requirements.txt
-ONBUILD RUN pip3 install
+COPY requirements.txt /usr/app/requirements.txt
+RUN pip3 install -r /usr/app/requirements.txt
 
 ENTRYPOINT ["/usr/bin/python3", "/usr/app/postoffice.py"]
