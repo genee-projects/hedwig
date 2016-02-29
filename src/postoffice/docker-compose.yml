@@ -1,0 +1,8 @@
+deliveryman:
+  container_name: mailman
+  restart: always
+  build: .
+  ports:
+    -  80:80
+  volumes:
+    - ./:/usr/app/
