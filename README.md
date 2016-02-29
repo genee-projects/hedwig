@@ -88,3 +88,46 @@ hedwig (海德薇, 哈利波特的猫头鹰) 一个用来进行邮件发送队�
 * docker-compose (依赖 python, python-pip)
 
 #### 部署步骤
+
+1. 在宿主机中, 进入该项目的 `src/postoffice` 中, 在 `config.yml` 中的填写各个节点的配置信息后保存
+
+2. 执行 `docker-compose up -d` 进行 `postoffice` 部署
+
+
+## HTTP 协议接口 (postoffice http 接口)
+
+`postoffice` 只提供了一个用于发送邮件的接口, 假设部署 `postoffice` 的服务器域名为 **robots.smtp.genee.cn**, 如下:
+
+`http://robots.smtp.genee.cn/` 为接口地址.
+
+### 参数列表:
+
+* `fqdn`, 为请求发送邮件的服务器的 **FQDN**
+* `key`, 为随机字符串, 用于双方进行安全验证
+* `email` 为 json 结构字符串, 包含如下内容:
+	* mailfrom
+	* rcpttos
+	* data
+
+* `email` 中 `mailfrom` 为邮件发送方的地址 (配置在 `mailman` 服务器 `/etc/msmtprc` 中, 例如: `sender@geneegroup.com`
+
+* `email` 中 `rcpttos` 为收件人地址合集, 例如:  `["stenote@163.com"]`
+* `email` 中 `data` 为发送邮件的内容(包含, `From:`, `To:`,  `Subject:` 和邮件正文, 例如:
+
+	```
+	From: sender@geneegroup.com
+	To: stenote@163.com
+	Subject: Hello World
+
+	Hello Stenote
+	```
+
+### 返回结构
+
+#### 正常发送邮件
+
+返回 `http` 状态为 **200**
+
+#### 验证失败
+
+返回 `http` 状态为 **401**

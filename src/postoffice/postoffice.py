@@ -61,8 +61,14 @@ def post():
 
             mx_domain = app.dns.get(domain)
 
+            logger.debug('check mx_domain, {rcptto} -> {mx_domain}'.format(
+                rcptto=r,
+                mx_domain=mx_domain
+            ))
+
             mta = smtplib.SMTP(mx_domain)
             mta.sendmail(from_addr=mailfrom, to_addrs=rcpttos, msg=data)
+
             mta.quit()
 
         response = make_response('', 200)
