@@ -44,9 +44,13 @@ class Mailman(smtpd.SMTPServer):
         # 开启服务
         smtpd.SMTPServer.__init__(*args, **kwargs)
 
-        # 加载配置
-        with open('config.yml') as f:
-            config = yaml.load(f)
+        try:
+            # 加载配置
+            with open('config.yml') as f:
+                config = yaml.load(f)
+        except FileNotFoundError:
+            sys.stderr.write('\nError: Unable to find config.yml\n')
+            sys.exit(1)
 
         logger.info('config: fqdn {fqdn}, key {key}'.format(
             fqdn=config['fqdn'],

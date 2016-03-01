@@ -124,7 +124,7 @@ hedwig (海德薇, 哈利波特的猫头鹰) 一个用来进行邮件发送队�
 	Hello Stenote
 	```
 
-### 返回结构
+### 返回结果
 
 #### 正常发送邮件
 
@@ -133,3 +133,27 @@ hedwig (海德薇, 哈利波特的猫头鹰) 一个用来进行邮件发送队�
 #### 验证失败
 
 返回 `http` 状态为 **401**
+
+## 注意事项
+
+* 邮件发送中, `mailfrom` 和 `data` 中的  `From` 需一致, 否则会出现代发的情况产生.
+
+## 简单发送测试
+
+文件 **sample_email.txt** 写入如下内容:
+
+```
+From: sender@geneegroup.com
+To: stenote@163.com
+Subject: Hello World
+
+
+Hello Stenote !
+```
+如上内容为上述接口中使用的 `data` 内容
+
+执行如下命令进行邮件发送:
+
+```
+cat sample_email.txt | msmtp --debug stenote@163.com
+```

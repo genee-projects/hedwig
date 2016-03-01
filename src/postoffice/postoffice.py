@@ -54,6 +54,7 @@ def post():
 
             if domain not in app.dns:
                 # 获取 MX 记录, 并且存储
+
                 answers = dns.resolver.query(domain, 'MX')
                 mx_domain = str(answers[0].exchange)
 
@@ -65,11 +66,17 @@ def post():
                 rcptto=r,
                 mx_domain=mx_domain
             ))
-
-            mta = smtplib.SMTP(mx_domain)
-            mta.sendmail(from_addr=mailfrom, to_addrs=rcpttos, msg=data)
-
-            mta.quit()
+            try:
+                mta = smtplib.SMTP(mx_domain)
+                mta.sendmail(from_addr=mailfrom, to_addrs=rcpttos, msg=data)
+            except smtplib.SMTPException:
+                logger.warning('邮件发送失败! from: {from_addr}, to: {to_addrs}, data: {data}'.format(
+                    from_addr=mailfrom,
+                    to_addrs=json.dumps(rcpttos),
+                    data=data
+                ))
+            finally:
+                mta.quit()
 
         response = make_response('', 200)
         return response
@@ -79,12 +86,16 @@ def post():
 
 if __name__ == '__main__':
 
-    # 初始化设定 app 部分参数
-    with app.app_context():
-        with open('config.yml') as f:
-            app.kv = yaml.load(f)
+    try:
+        # 初始化设定 app 部分参数
+        with app.app_context():
+            with open('config.yml') as f:
+                app.kv = yaml.load(f)
+    except FileNotFoundError:
+        sys.stderr.write('\nError: Unable to find config.yml\n')
+        sys.exit(1)
 
-        app.dns = {}
+    app.dns = {}
 
     # 设定 Logging
     logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s')
@@ -104,6 +115,5 @@ if __name__ == '__main__':
 
     logger.info('Postoffice is running !!!')
 
-    # 1024
     app.secret_key = '3*&0_oZyEH'
     app.run(port=80, debug=debug)
