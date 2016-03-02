@@ -73,7 +73,7 @@ hedwig (海德薇, 哈利波特的猫头鹰) 一个用来进行邮件发送队�
 	syslog LOG_MAIL
 	account default
 	host 172.17.42.1
-	from sender@geneegroup.com
+	from sender@robots.smtp.genee.cn
 	```
 
 4. 在宿主机中, 进入该项目的 `src/mailman`. 修改 `docker-compose.yml` 配置中的 `172.17.42.1:25:25` 中的 IP 地址为 **步骤 1** 中明确的网卡地址
@@ -117,7 +117,7 @@ hedwig (海德薇, 哈利波特的猫头鹰) 一个用来进行邮件发送队�
 * `email` 中 `data` 为发送邮件的内容(包含, `From:`, `To:`,  `Subject:` 和邮件正文, 例如:
 
 	```
-	From: sender@geneegroup.com
+	From: sender@robots.smtp.genee.cn
 	To: stenote@163.com
 	Subject: Hello World
 
@@ -136,14 +136,14 @@ hedwig (海德薇, 哈利波特的猫头鹰) 一个用来进行邮件发送队�
 
 ## 注意事项
 
-* 邮件发送中, `mailfrom` 和 `data` 中的  `From` 需一致, 否则会出现代发的情况产生.
+* 邮件发送中, `mailfrom` 需要与 `data` 中的 `From` 需一致, 否则会出现代发的情况产生.
 
 ## 简单发送测试
 
 文件 **sample_email.txt** 写入如下内容:
 
 ```
-From: sender@geneegroup.com
+From: sender@robots.smtp.genee.cn
 To: stenote@163.com
 Subject: Hello World
 
