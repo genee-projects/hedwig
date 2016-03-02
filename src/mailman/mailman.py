@@ -15,7 +15,7 @@ logger = logging.getLogger('mailman')
 class Mailman(smtpd.SMTPServer):
     """
     继承自smtpd.SMTPServer
-    用于把邮件发送请求按照 POST 请求发送到 robots.smtp.genee.cn
+    用于把邮件发送请求按照 POST 请求发送到 robots.genee.cn
     """
 
     config = {}
@@ -77,7 +77,7 @@ class Mailman(smtpd.SMTPServer):
         # 尝试递送邮件到 postoffice
         try:
             r = requests.post(
-                config.get('url', 'http://robots.smtp.genee.cn/'),
+                config.get('url', 'http://robots.genee.cn/'),
                 data={
                     'fqdn': config['fqdn'],
                     'key': config['key'],
@@ -96,7 +96,7 @@ class Mailman(smtpd.SMTPServer):
 
         except requests.exceptions.RequestException:
             # http://docs.python-requests.org/zh_CN/latest/user/quickstart.html
-            logger.warning('{url} is down!!!'.format(url=config.get('url', 'http://robots.smtp.genee.cn')))
+            logger.warning('{url} is down!!!'.format(url=config.get('url', 'http://robots.genee.cn')))
 
         return None
 
