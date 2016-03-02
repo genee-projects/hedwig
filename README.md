@@ -73,7 +73,7 @@ hedwig (海德薇, 哈利波特的猫头鹰) 一个用来进行邮件发送队�
 	syslog LOG_MAIL
 	account default
 	host 172.17.42.1
-	from sender@robots.smtp.genee.cn
+	from sender@robots.genee.cn
 	```
 
 4. 在宿主机中, 进入该项目的 `src/mailman`. 修改 `docker-compose.yml` 配置中的 `172.17.42.1:25:25` 中的 IP 地址为 **步骤 1** 中明确的网卡地址
@@ -98,9 +98,9 @@ hedwig (海德薇, 哈利波特的猫头鹰) 一个用来进行邮件发送队�
 
 ## HTTP 协议接口 (postoffice http 接口)
 
-`postoffice` 只提供了一个用于发送邮件的接口, 假设部署 `postoffice` 的服务器域名为 **robots.smtp.genee.cn**, 如下:
+`postoffice` 只提供了一个用于发送邮件的接口, 假设部署 `postoffice` 的服务器域名为 **robots.genee.cn**, 如下:
 
-`http://robots.smtp.genee.cn/` 为接口地址.
+`http://robots.genee.cn/` 为接口地址.
 
 ### 参数列表:
 
@@ -111,13 +111,13 @@ hedwig (海德薇, 哈利波特的猫头鹰) 一个用来进行邮件发送队�
 	* rcpttos
 	* data
 
-* `email` 中 `mailfrom` 为邮件发送方的地址 (配置在 `mailman` 服务器 `/etc/msmtprc` 中, 例如: `sender@robots.smtp.genee.cn`
+* `email` 中 `mailfrom` 为邮件发送方的地址 (配置在 `mailman` 服务器 `/etc/msmtprc` 中, 例如: `sender@robots.genee.cn`
 
 * `email` 中 `rcpttos` 为收件人地址合集, 例如:  `["stenote@163.com"]`
 * `email` 中 `data` 为发送邮件的内容(包含, `From:`, `To:`,  `Subject:` 和邮件正文, 例如:
 
 	```
-	From: sender@robots.smtp.genee.cn
+	From: sender@robots.genee.cn
 	To: stenote@163.com
 	Subject: Hello World
 
@@ -145,7 +145,7 @@ hedwig (海德薇, 哈利波特的猫头鹰) 一个用来进行邮件发送队�
 文件 **sample_email.txt** 写入如下内容:
 
 ```
-From: sender@robots.smtp.genee.cn
+From: sender@robots.genee.cn
 To: stenote@163.com
 Subject: Hello World
 
