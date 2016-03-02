@@ -31,7 +31,7 @@ class Mailman(smtpd.SMTPServer):
         logger.addHandler(fh)
 
         # 判断是否开启 Debug 默认开启
-        if 'debug' in kwargs:
+        if kwargs['debug']:
             logger.setLevel(logging.DEBUG)
             del kwargs['debug']
             logger.debug('Running Debug Mode')

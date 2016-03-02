@@ -111,7 +111,7 @@ hedwig (海德薇, 哈利波特的猫头鹰) 一个用来进行邮件发送队�
 	* rcpttos
 	* data
 
-* `email` 中 `mailfrom` 为邮件发送方的地址 (配置在 `mailman` 服务器 `/etc/msmtprc` 中, 例如: `sender@geneegroup.com`
+* `email` 中 `mailfrom` 为邮件发送方的地址 (配置在 `mailman` 服务器 `/etc/msmtprc` 中, 例如: `sender@robots.smtp.genee.cn`
 
 * `email` 中 `rcpttos` 为收件人地址合集, 例如:  `["stenote@163.com"]`
 * `email` 中 `data` 为发送邮件的内容(包含, `From:`, `To:`,  `Subject:` 和邮件正文, 例如:
@@ -137,6 +137,8 @@ hedwig (海德薇, 哈利波特的猫头鹰) 一个用来进行邮件发送队�
 ## 注意事项
 
 * 邮件发送中, `mailfrom` 需要与 `data` 中的 `From` 需一致, 否则会出现代发的情况产生.
+* postoffice 如果发送失败, 请开启 **debug** 模式, 查看邮件发送返回的结果:
+    * [163 退信查询](http://help.163.com/09/1224/17/5RAJ4LMH00753VB8.html)
 
 ## 简单发送测试
 

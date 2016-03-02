@@ -68,13 +68,18 @@ def post():
             ))
             try:
                 mta = smtplib.SMTP(mx_domain)
+
+                if app.debug:
+                    mta.set_debuglevel(1)
+
                 mta.sendmail(from_addr=mailfrom, to_addrs=rcpttos, msg=data)
-            except smtplib.SMTPException:
+            except smtplib.SMTPException as e:
                 logger.warning('邮件发送失败! from: {from_addr}, to: {to_addrs}, data: {data}'.format(
                     from_addr=mailfrom,
                     to_addrs=json.dumps(rcpttos),
                     data=data
                 ))
+                print(e)
             finally:
                 mta.quit()
 
