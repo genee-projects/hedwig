@@ -22,6 +22,23 @@ class Mailman(smtpd.SMTPServer):
 
     def __init__(*args, **kwargs):
 
+        try:
+            # 加载配置
+            with open('config.yml', 'r') as f:
+                config = yaml.load(f)
+        except FileNotFoundError:
+            sys.stderr.write('\nError: Unable to find config.yml\n')
+            sys.exit(1)
+
+        logger.info('config: fqdn {fqdn}, key {key}, url: {url}'.format(
+            fqdn=config['fqdn'],
+            key=config['key'],
+            url=config['url'],
+        ))
+
+        Mailman.config = config
+
+
         # 设定 Logging
         logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -31,12 +48,15 @@ class Mailman(smtpd.SMTPServer):
         logger.addHandler(fh)
 
         # 判断是否开启 Debug 默认开启
-        if kwargs['debug']:
+        # 如果通过 CLI 开启了 Debug 或者 config 中配置了 Debug, 那么开启 Debug 模式
+        if kwargs['debug'] or config.get('debug', False):
             logger.setLevel(logging.DEBUG)
-            del kwargs['debug']
             logger.debug('Running Debug Mode')
         else:
             logger.setLevel(logging.INFO)
+
+        # kwargs 中多余的 debug 需要进行删除
+        del kwargs['debug']
 
         # 提示服务开启
         logger.info('Running Mailman on port 25')
@@ -44,20 +64,6 @@ class Mailman(smtpd.SMTPServer):
         # 开启服务
         smtpd.SMTPServer.__init__(*args, **kwargs)
 
-        try:
-            # 加载配置
-            with open('config.yml', 'r') as f:
-                config = yaml.load(f)
-        except FileNotFoundError:
-            sys.stderr.write('\nError: Unable to find config.yml\n')
-            sys.exit(1)
-
-        logger.info('config: fqdn {fqdn}, key {key}'.format(
-            fqdn=config['fqdn'],
-            key=config['key'],
-        ))
-
-        Mailman.config = config
 
     # 收到邮件发送请求后, 进行邮件发送
     def process_message(self, peer, mailfrom, rcpttos, data, **kwargs):

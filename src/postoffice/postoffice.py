@@ -95,7 +95,8 @@ if __name__ == '__main__':
         # 初始化设定 app 部分参数
         with app.app_context():
             with open('config.yml', 'r') as f:
-                app.kv = yaml.load(f)
+                config = yaml.load(f)
+                app.kv = config.get('clients', {})
     except FileNotFoundError:
         sys.stderr.write('\nError: Unable to find config.yml\n')
         sys.exit(1)
@@ -110,7 +111,7 @@ if __name__ == '__main__':
 
     logger.addHandler(fh)
 
-    debug = True if '--deubg' in sys.argv or '-d' in sys.argv else False
+    debug = True if '--deubg' in sys.argv or '-d' in sys.argv or config.get('debug', True) else False
 
     if debug:
         logger.setLevel(logging.DEBUG)
