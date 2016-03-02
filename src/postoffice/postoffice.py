@@ -89,7 +89,7 @@ if __name__ == '__main__':
     try:
         # 初始化设定 app 部分参数
         with app.app_context():
-            with open('config.yml') as f:
+            with open('config.yml', 'r') as f:
                 app.kv = yaml.load(f)
     except FileNotFoundError:
         sys.stderr.write('\nError: Unable to find config.yml\n')
@@ -116,4 +116,4 @@ if __name__ == '__main__':
     logger.info('Postoffice is running !!!')
 
     app.secret_key = '3*&0_oZyEH'
-    app.run(port=80, debug=debug)
+    app.run(port=80, host='0.0.0.0', debug=debug)

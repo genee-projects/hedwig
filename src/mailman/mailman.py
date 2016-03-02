@@ -46,7 +46,7 @@ class Mailman(smtpd.SMTPServer):
 
         try:
             # 加载配置
-            with open('config.yml') as f:
+            with open('config.yml', 'r') as f:
                 config = yaml.load(f)
         except FileNotFoundError:
             sys.stderr.write('\nError: Unable to find config.yml\n')

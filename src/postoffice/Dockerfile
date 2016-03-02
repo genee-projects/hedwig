@@ -9,7 +9,8 @@ RUN apk update && \
 
 EXPOSE 80
 
-VOLUME ["/usr/app"]
+VOLUME /usr/app
+WORKDIR /usr/app
 
 COPY requirements.txt /usr/app/requirements.txt
 RUN pip3 install -r /usr/app/requirements.txt
