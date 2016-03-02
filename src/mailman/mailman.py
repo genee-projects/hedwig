@@ -38,7 +38,6 @@ class Mailman(smtpd.SMTPServer):
 
         Mailman.config = config
 
-
         # 设定 Logging
         logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -63,7 +62,6 @@ class Mailman(smtpd.SMTPServer):
 
         # 开启服务
         smtpd.SMTPServer.__init__(*args, **kwargs)
-
 
     # 收到邮件发送请求后, 进行邮件发送
     def process_message(self, peer, mailfrom, rcpttos, data, **kwargs):

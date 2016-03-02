@@ -1,4 +1,4 @@
----
 key: key
 fqdn: fqdn
-...
+url: http://robots.genee.cn
+debug: true

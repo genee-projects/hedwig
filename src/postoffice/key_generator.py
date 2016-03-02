@@ -16,10 +16,8 @@ from string import Template
 s = """
 请复制如下内容到 mailman 的 config.yml 中:
 
----
 fqdn: $fqdn
 key: $key
-...
 
 请复制如下内容到 postoffice 的 config.yml 中的 (clients 不要重复):
 
