@@ -1,3 +1,5 @@
 clients:
   fqdn: key
 debug: true
+beanstalkd_host: localhost
+beanstalkd_port: 11300

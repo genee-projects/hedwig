@@ -1,125 +1,51 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from flask import Flask, request, session, make_response, abort
+import tornado.ioloop
+import tornado.web
 
 import yaml
-import dns.resolver
-import smtplib
-import json
-import logging
-import sys
-
-logger = logging.getLogger('postoffice')
-
-app = Flask(__name__)
+import beanstalkc
 
 
-# 每次请求都进行验证
-@app.before_request
-def before_request():
+class MainHandler(tornado.web.RequestHandler):
 
-    key = request.form.get('key', None)
-    fqdn = request.form.get('fqdn', None)
+    authorized = False
 
-    if 'fqdn' not in session:
+    # 进行 auth 验证
+    def initialize(self):
+
+        key = self.get_argument('key', None)
+        fqdn = self.get_argument('fqdn', None)
+
         if fqdn in app.kv and app.kv.get(fqdn, None) == key:
-            session['fqdn'] = fqdn
+            self.authorized = True
+        else:
+            self.authorized = True
+
+    # 处理请求
+    def get(self):
+
+        if self.authorized:
+            # 推送到 Beanstalkd 中
+            app.beans.put(self.get_argument('email'))
+        else:
+            self.send_error(status_code=401)
 
 
-# 增加 Route, 只支持 / 路径传递
-@app.route('/', methods=['POST'])
-def post():
+def make_app():
+    return tornado.web.Application([
+        (r"/", MainHandler),
+    ])
 
-    # 简单得进行验证
-    if session.get('fqdn', False):
+if __name__ == "__main__":
+    app = make_app()
+    app.listen(80)
 
-        email = json.loads(request.form['email'])
+    with open('config.yml', 'r') as f:
+        config = yaml.load(f)
+        app.kv = config.get('clients', {})
 
-        rcpttos = email['rcpttos']
-        mailfrom = email['mailfrom']
-        data = email['data']
+    app.beans = beanstalkc.Connection(host=config.get('beanstalkd_host'), port=config.get('beanstalkd_port'))
 
-        logger.debug('rcpttos: {rcpttos}, mailfrom: {mailfrom}, data: {data}'.format(
-            rcpttos=json.dumps(rcpttos),
-            mailfrom=mailfrom,
-            data=data
-        ))
-
-        # 遍历收件人
-        for r in rcpttos:
-
-            # 进行遍历, 获取到所有的.
-            domain = r.split('@')[-1]
-
-            if domain not in app.dns:
-                # 获取 MX 记录, 并且存储
-
-                answers = dns.resolver.query(domain, 'MX')
-                mx_domain = str(answers[0].exchange)
-
-                app.dns[domain] = mx_domain
-
-            mx_domain = app.dns.get(domain)
-
-            logger.debug('check mx_domain, {rcptto} -> {mx_domain}'.format(
-                rcptto=r,
-                mx_domain=mx_domain
-            ))
-            try:
-                mta = smtplib.SMTP(mx_domain)
-
-                if app.debug:
-                    mta.set_debuglevel(1)
-
-                mta.sendmail(from_addr=mailfrom, to_addrs=rcpttos, msg=data)
-            except smtplib.SMTPException as e:
-                logger.warning('邮件发送失败! from: {from_addr}, to: {to_addrs}, data: {data}'.format(
-                    from_addr=mailfrom,
-                    to_addrs=json.dumps(rcpttos),
-                    data=data
-                ))
-                print(e)
-            finally:
-                mta.quit()
-
-        response = make_response('', 200)
-        return response
-    else:
-        abort(401)
-
-
-if __name__ == '__main__':
-
-    try:
-        # 初始化设定 app 部分参数
-        with app.app_context():
-            with open('config.yml', 'r') as f:
-                config = yaml.load(f)
-                app.kv = config.get('clients', {})
-    except FileNotFoundError:
-        sys.stderr.write('\nError: Unable to find config.yml\n')
-        sys.exit(1)
-
-    app.dns = {}
-
-    # 设定 Logging
-    logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s')
-
-    fh = logging.FileHandler('postoffice.log')
-    fh.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
-
-    logger.addHandler(fh)
-
-    debug = True if '--deubg' in sys.argv or '-d' in sys.argv or config.get('debug', True) else False
-
-    if debug:
-        logger.setLevel(logging.DEBUG)
-        logger.debug('Running Debug Mode')
-    else:
-        logger.setLevel(logging.INFO)
-
-    logger.info('Postoffice is running !!!')
-
-    app.secret_key = '3*&0_oZyEH'
-    app.run(port=80, host='0.0.0.0', debug=debug)
+    tornado.ioloop.IOLoop.current().start()
