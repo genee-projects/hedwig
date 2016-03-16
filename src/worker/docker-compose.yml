@@ -1,0 +1,15 @@
+---
+beanstalkd:
+  image: schickling/beanstalkd:latest
+  restart: always
+  ports:
+    - 172.17.42.1:11300:11300
+  container_name: beanstalkd
+worker:
+  container_name: worker
+  restart: always
+  build: .
+  volumes:
+    - ./:/usr/app/
+  links:
+    - beanstalkd:beanstalkd

@@ -1,3 +1,4 @@
+---
 clients:
   fqdn: key
 debug: true
