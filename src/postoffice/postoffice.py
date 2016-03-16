@@ -64,7 +64,7 @@ class MainHandler(tornado.web.RequestHandler):
 
                 mx_domain = self.dns.get(domain)
 
-                logger.debug('check mx_domain, {rcptto} -> {mx_domain}'.format(
+                logger.info('check mx_domain, {rcptto} -> {mx_domain}'.format(
                     rcptto=r,
                     mx_domain=mx_domain
                 ))
@@ -112,7 +112,7 @@ if __name__ == "__main__":
 
     logger.addHandler(fh)
 
-    debug = True if app.kv.get('debug', False) else False
+    debug = True if config.get('debug', False) else False
 
     if debug:
         logger.setLevel(logging.DEBUG)
