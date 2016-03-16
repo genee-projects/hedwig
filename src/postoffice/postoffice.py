@@ -5,12 +5,18 @@ import tornado.ioloop
 import tornado.web
 
 import yaml
-import beanstalkc
+import dns.resolver
+import smtplib
+import json
+import logging
+
+logger = logging.getLogger('postoffice')
 
 
 class MainHandler(tornado.web.RequestHandler):
 
     authorized = False
+    dns = {}
 
     # 进行 auth 验证
     def initialize(self):
@@ -21,14 +27,66 @@ class MainHandler(tornado.web.RequestHandler):
         if fqdn in app.kv and app.kv.get(fqdn, None) == key:
             self.authorized = True
         else:
-            self.authorized = True
+            self.authorized = False
 
     # 处理请求
-    def get(self):
+    def post(self):
 
         if self.authorized:
-            # 推送到 Beanstalkd 中
-            app.beans.put(self.get_argument('email'))
+            # 直接发送
+
+            self.finish()
+
+            email = json.loads(self.get_argument('email'))
+
+            rcpttos = email['rcpttos']
+            mailfrom = email['mailfrom']
+            data = email['data']
+
+            logger.debug('rcpttos: {rcpttos}, mailfrom: {mailfrom}, data: {data}'.format(
+                rcpttos=json.dumps(rcpttos),
+                mailfrom=mailfrom,
+                data=data
+            ))
+
+            # 遍历收件人
+            for r in rcpttos:
+
+                # 进行遍历, 获取到所有的.
+                domain = r.split('@')[-1]
+
+                if domain not in self.dns:
+                    # 获取 MX 记录, 并且存储
+                    answers = dns.resolver.query(domain, 'MX')
+                    mx_domain = str(answers[0].exchange)
+
+                    self.dns[domain] = mx_domain
+
+                mx_domain = self.dns.get(domain)
+
+                logger.debug('check mx_domain, {rcptto} -> {mx_domain}'.format(
+                    rcptto=r,
+                    mx_domain=mx_domain
+                ))
+
+                try:
+                    mta = smtplib.SMTP(mx_domain)
+
+                    if debug:
+                        mta.set_debuglevel(1)
+
+                    mta.sendmail(from_addr=mailfrom, to_addrs=rcpttos, msg=data)
+                except smtplib.SMTPException as e:
+                    logger.warning('邮件发送失败! from: {from_addr}, to: {to_addrs}, data: {data}'.format(
+                        from_addr=mailfrom,
+                        to_addrs=json.dumps(rcpttos),
+                        data=data
+                    ))
+                    print(e)
+                finally:
+                    mta.quit()
+
+
         else:
             self.send_error(status_code=401)
 
@@ -46,6 +104,22 @@ if __name__ == "__main__":
         config = yaml.load(f)
         app.kv = config.get('clients', {})
 
-    app.beans = beanstalkc.Connection(host=config.get('beanstalkd_host'), port=config.get('beanstalkd_port'))
+    # 设定 Logging
+    logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s')
+
+    fh = logging.FileHandler('postoffice.log')
+    fh.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+
+    logger.addHandler(fh)
+
+    debug = True if app.kv.get('debug', False) else False
+
+    if debug:
+        logger.setLevel(logging.DEBUG)
+        logger.debug('Running Debug Mode')
+    else:
+        logger.setLevel(logging.INFO)
+
+    logger.info('Postoffice is running !')
 
     tornado.ioloop.IOLoop.current().start()
