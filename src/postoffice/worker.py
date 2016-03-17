@@ -32,20 +32,20 @@ class Worker(Thread):
 
             email = json.loads(job.body)
 
-            rcpttos = email['rcpttos']
-            mailfrom = email['mailfrom']
-            data = email['data']
+            mailto = email['to']
+            mailfrom = email['from']
+            maildata = email['data']
 
             logger.debug(
                 'rcpttos: {r}, mailfrom: {f}, data: {d}'.format(
-                    r=json.dumps(rcpttos),
+                    r=json.dumps(mailto),
                     f=mailfrom,
-                    d=data
+                    d=maildata
                 )
             )
 
             # 遍历收件人
-            for r in rcpttos:
+            for r in mailto:
 
                 # 进行遍历, 获取到所有的.
                 domain = r.split('@')[-1]
@@ -66,13 +66,13 @@ class Worker(Thread):
                         mta.set_debuglevel(1)
 
                     mta.sendmail(from_addr=mailfrom,
-                                 to_addrs=rcpttos, msg=data)
+                                 to_addrs=mailto, msg=maildata)
                 except smtplib.SMTPException as e:
                     logger.warning(
                         '发送失败! from: {f}, to: {t}, data: {d}'.format(
                             f=mailfrom,
-                            t=json.dumps(rcpttos),
-                            d=data
+                            t=json.dumps(mailto),
+                            d=maildata
                         )
                     )
                     logger.info('失败原因: {r}'.format(r=str(e)))

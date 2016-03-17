@@ -70,10 +70,10 @@ class Mailman(smtpd.SMTPServer):
         config = self.config
 
         logger.debug(
-            'mailfrom: {mailfrom}, rcpttos: {rcpttos}, data: {data}'.format(
-                mailfrom=mailfrom,
-                rcpttos=json.dumps(rcpttos),
-                data=json.dumps(data)
+            'from: {f}, to: {t}, data: {d}'.format(
+                f=mailfrom,
+                t=json.dumps(rcpttos),
+                d=json.dumps(data)
             )
         )
 
@@ -85,8 +85,8 @@ class Mailman(smtpd.SMTPServer):
                     'fqdn': config['fqdn'],
                     'key': config['key'],
                     'email': json.dumps({
-                        'mailfrom': mailfrom,
-                        'rcpttos': rcpttos,
+                        'from': mailfrom,
+                        'to': rcpttos,
                         'data': data
                     })
                 },
