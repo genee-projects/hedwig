@@ -104,7 +104,7 @@ if __name__ == "__main__":
     else:
         logger.setLevel(logging.INFO)
 
-    for i in range(config.get('workers', 4)):
+    for i in range(config.get('workers', 1)):
         name = "Thread {id}".format(id=i)
         logger.info("{thread} is running".format(thread=name))
         worker = Worker()
