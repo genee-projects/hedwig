@@ -3,10 +3,10 @@ mailman:
   restart: always
   build: .
   ports:
-    - 172.17.42.1:25:25
+    - 172.17.0.1:25:25
   volumes:
     - ./:/usr/app/
     - /etc/localtime:/etc/localtime:ro
   dns:
-    - 172.17.42.1
+    - 172.17.0.1
   log_driver: none
