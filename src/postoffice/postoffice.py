@@ -55,7 +55,7 @@ def make_app():
 if __name__ == "__main__":
     app = make_app()
 
-    with open('config.yml', 'r') as f:
+    with open('postoffice.config.yml', 'r') as f:
         config = yaml.load(f)
         app.kv = config.get('clients', {})
 

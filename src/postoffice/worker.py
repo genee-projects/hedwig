@@ -76,7 +76,7 @@ logger = logging.getLogger('worker')
 
 if __name__ == "__main__":
 
-    with open('config.yml', 'r') as f:
+    with open('worker.config.yml', 'r') as f:
         config = yaml.load(f)
 
     # 设定 Logging
