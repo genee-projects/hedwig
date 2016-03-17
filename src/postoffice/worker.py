@@ -21,7 +21,10 @@ class Worker(Thread):
 
     def run(self):
 
-        beanstalk = Connection(config.get('beanstalkd_host', 'localhost'), config.get('beanstalkd_port', 11300))
+        beanstalk = Connection(
+            config.get('beanstalkd_host', 'localhost'),
+            config.get('beanstalkd_port', 11300)
+        )
 
         while True:
             job = beanstalk.reserve()
@@ -33,11 +36,13 @@ class Worker(Thread):
             mailfrom = email['mailfrom']
             data = email['data']
 
-            logger.debug('rcpttos: {rcpttos}, mailfrom: {mailfrom}, data: {data}'.format(
-                rcpttos=json.dumps(rcpttos),
-                mailfrom=mailfrom,
-                data=data
-            ))
+            logger.debug(
+                'rcpttos: {r}, mailfrom: {f}, data: {d}'.format(
+                    r=json.dumps(rcpttos),
+                    f=mailfrom,
+                    d=data
+                )
+            )
 
             # 遍历收件人
             for r in rcpttos:
@@ -60,13 +65,16 @@ class Worker(Thread):
                     if debug:
                         mta.set_debuglevel(1)
 
-                    mta.sendmail(from_addr=mailfrom, to_addrs=rcpttos, msg=data)
+                    mta.sendmail(from_addr=mailfrom,
+                                 to_addrs=rcpttos, msg=data)
                 except smtplib.SMTPException as e:
-                    logger.warning('邮件发送失败! from: {from_addr}, to: {to_addrs}, data: {data}'.format(
-                        from_addr=mailfrom,
-                        to_addrs=json.dumps(rcpttos),
-                        data=data
-                    ))
+                    logger.warning(
+                        '发送失败! from: {f}, to: {t}, data: {d}'.format(
+                            f=mailfrom,
+                            t=json.dumps(rcpttos),
+                            d=data
+                        )
+                    )
                     print(e)
                 finally:
                     mta.quit()
@@ -83,7 +91,8 @@ if __name__ == "__main__":
     logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s')
 
     fh = logging.FileHandler('worker.log')
-    fh.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+    fh.setFormatter(logging.Formatter(
+        '%(asctime)s - %(levelname)s - %(message)s'))
 
     logger.addHandler(fh)
 

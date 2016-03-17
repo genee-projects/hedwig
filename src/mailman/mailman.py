@@ -42,7 +42,8 @@ class Mailman(smtpd.SMTPServer):
         logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s')
 
         fh = logging.FileHandler('mailman.log')
-        fh.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+        fh.setFormatter(logging.Formatter(
+            '%(asctime)s - %(levelname)s - %(message)s'))
 
         logger.addHandler(fh)
 
@@ -68,11 +69,13 @@ class Mailman(smtpd.SMTPServer):
 
         config = self.config
 
-        logger.debug('mailfrom: {mailfrom}, rcpttos: {rcpttos}, data: {data}'.format(
-            mailfrom=mailfrom,
-            rcpttos=json.dumps(rcpttos),
-            data=json.dumps(data)
-        ))
+        logger.debug(
+            'mailfrom: {mailfrom}, rcpttos: {rcpttos}, data: {data}'.format(
+                mailfrom=mailfrom,
+                rcpttos=json.dumps(rcpttos),
+                data=json.dumps(data)
+            )
+        )
 
         # 尝试递送邮件到 postoffice
         try:
@@ -96,7 +99,11 @@ class Mailman(smtpd.SMTPServer):
 
         except requests.exceptions.RequestException:
             # http://docs.python-requests.org/zh_CN/latest/user/quickstart.html
-            logger.warning('{url} is down!!!'.format(url=config.get('url', 'http://robot.genee.cn')))
+            logger.warning(
+                '{url} is down'.format(
+                    url=config.get('url', 'http://robot.genee.cn')
+                )
+            )
 
         return None
 
