@@ -6,5 +6,6 @@ mailman:
     - 172.17.42.1:25:25
   volumes:
     - ./:/usr/app/
+    - /etc/localtime:/etc/localtime:ro
   dns:
     - 172.17.42.1

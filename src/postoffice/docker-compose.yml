@@ -6,3 +6,4 @@ postoffice:
     - 80:80
   volumes:
     - ./:/usr/app/
+    - /etc/localtime:/etc/localtime:ro

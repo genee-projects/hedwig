@@ -11,5 +11,6 @@ worker:
   build: .
   volumes:
     - ./:/usr/app/
+    - /etc/localtime:/etc/localtime:ro
   links:
     - beanstalkd:beanstalkd
