@@ -2,3 +2,4 @@
 workers: 1
 beanstalkd_host: beanstalkd
 beanstalkd_port: 11300
+...

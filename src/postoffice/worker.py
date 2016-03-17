@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pystalkd
-
 import dns.resolver
 import smtplib
 import json
