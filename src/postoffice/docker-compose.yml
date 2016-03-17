@@ -8,6 +8,8 @@ postoffice:
     - ./:/usr/app/
     - /etc/localtime:/etc/localtime:ro
   log_driver: none
+  links:
+    - beanstalkd:beanstalkd
 beanstalkd:
   image: schickling/beanstalkd:latest
   restart: always
