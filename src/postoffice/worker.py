@@ -75,7 +75,7 @@ class Worker(Thread):
                             d=data
                         )
                     )
-                    print(e)
+                    logger.info('失败原因: {r}'.format(r=str(e)))
                 finally:
                     mta.quit()
 
