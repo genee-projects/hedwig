@@ -7,3 +7,4 @@ postoffice:
   volumes:
     - ./:/usr/app/
     - /etc/localtime:/etc/localtime:ro
+  log_driver: none

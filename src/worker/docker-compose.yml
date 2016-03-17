@@ -5,6 +5,7 @@ beanstalkd:
   ports:
     - 172.17.42.1:11300:11300
   container_name: beanstalkd
+  log_driver: none
 worker:
   container_name: worker
   restart: always

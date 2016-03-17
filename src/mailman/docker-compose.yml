@@ -9,3 +9,4 @@ mailman:
     - /etc/localtime:/etc/localtime:ro
   dns:
     - 172.17.42.1
+  log_driver: none
