@@ -7,6 +7,4 @@ mailman:
   volumes:
     - ./:/usr/app/
     - /etc/localtime:/etc/localtime:ro
-  dns:
-    - 172.17.0.1
   log_driver: none
