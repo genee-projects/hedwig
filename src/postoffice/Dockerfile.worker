@@ -1,13 +1,4 @@
-FROM alpine:latest
-
-RUN apk update && \
-	apk add python3 && \
-	apk add --virtual=build-dependencies wget ca-certificates && \
-	wget "https://bootstrap.pypa.io/get-pip.py" -O /dev/stdout --no-check-certificate | python3 && \
-	apk del build-dependencies && \
-	rm -rf /var/cache/apk/*
-
-EXPOSE 80
+FROM genee/python:latest
 
 VOLUME /usr/app
 WORKDIR /usr/app
