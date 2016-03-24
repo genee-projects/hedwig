@@ -6,6 +6,7 @@ import tornado.web
 
 import yaml
 import logging
+import json
 
 from pystalkd.Beanstalkd import Connection
 
@@ -34,15 +35,19 @@ class MainHandler(tornado.web.RequestHandler):
         if self.authorized:
             # 直接发送
 
-            self.finish()
-
             email_content = self.get_argument('email')
 
-            if debug:
-                logger.debug(email_content)
+            email = json.loads(email_content)
 
-            beanstalk.put(email_content)
+            if not 'to' in email or not 'from' in email or not 'data' in email:
+                self.send_error(status_code=406)
+            else:
+                self.finish()
 
+                if debug:
+                    logger.debug(email_content)
+
+                beanstalk.put(email_content)
         else:
             self.send_error(status_code=401)
 
