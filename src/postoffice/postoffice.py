@@ -8,6 +8,7 @@ import yaml
 import logging
 import json
 
+from email.parser import Parser
 from pystalkd.Beanstalkd import Connection
 
 logger = logging.getLogger('postoffice')
@@ -37,17 +38,33 @@ class MainHandler(tornado.web.RequestHandler):
 
             email_content = self.get_argument('email')
 
-            email = json.loads(email_content)
+            try:
 
-            if not 'to' in email or not 'from' in email or not 'data' in email:
-                self.send_error(status_code=406)
-            else:
+                # json.loads 可能会抛出 json.decoder.JSONDecodeError
+                email = json.loads(email_content)
+
+                # 如果出现了不正常的结构, raise
+                if not 'to' in email or not 'from' in email or not 'data' in email:
+                    raise Exception
+
+                # 进行 email_content 的 parse
+                # parsestr 不会有 Exception
+                parsed = Parser().parsestr(email['data'])
+
+                # 必须要有 To
+                if not 'To' in parsed:
+                    raise Exception
+
                 self.finish()
 
                 if debug:
                     logger.debug(email_content)
 
                 beanstalk.put(email_content)
+
+            except:
+                self.send_error(status_code=406)
+
         else:
             self.send_error(status_code=401)
 
