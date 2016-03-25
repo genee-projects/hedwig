@@ -34,7 +34,7 @@ def next_worker(worker):
 
 if __name__ == "__main__":
 
-    logger = logging.getLogger('dispatcher')
+    logger = logging.getLogger('app')
 
     with open('config.yml', 'r') as f:
         config = yaml.load(f)

@@ -44,9 +44,9 @@ class Worker(Thread):
                 )
             )
 
-logger = logging.getLogger('trash_worker')
-
 if __name__ == "__main__":
+
+    logger = logging.getLogger('app')
 
     with open('config.yml', 'r') as f:
         config = yaml.load(f)

@@ -80,9 +80,9 @@ class Worker(Thread):
                     mta.quit()
 
 
-logger = logging.getLogger('send_worker')
-
 if __name__ == "__main__":
+
+    logger = logging.getLogger('app')
 
     with open('config.yml', 'r') as f:
         config = yaml.load(f)

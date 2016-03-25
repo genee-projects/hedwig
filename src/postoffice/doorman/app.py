@@ -11,8 +11,6 @@ import json
 from email.parser import Parser
 from pystalkd.Beanstalkd import Connection
 
-logger = logging.getLogger('doorman')
-
 
 class MainHandler(tornado.web.RequestHandler):
 
@@ -79,6 +77,9 @@ def make_app():
     ])
 
 if __name__ == "__main__":
+
+    logger = logging.getLogger('app')
+
     app = make_app()
 
     with open('config.yml', 'r') as f:
