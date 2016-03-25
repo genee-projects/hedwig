@@ -18,6 +18,17 @@ doorman:
   links:
     - beanstalkd:beanstalkd
   log_driver: none
+dispatcher:
+  container_name: dispatcher
+  restart: always
+  build: .
+  dockerfile: Dockerfile.dispatcher
+  volumes:
+    - ./:/usr/app/
+    - /etc/localtime:/etc/localtime:ro
+  links:
+    - beanstalkd:beanstalkd
+  log_driver: none
 send:
   container_name: send
   restart: always

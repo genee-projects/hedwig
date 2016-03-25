@@ -24,8 +24,9 @@ class Worker(Thread):
             config.get('beanstalkd_port', 11300)
         )
 
+        beanstalk.watch('send')
+
         while True:
-            beanstalk.use('send')
             job = beanstalk.reserve()
             job.delete()
 
@@ -83,13 +84,13 @@ logger = logging.getLogger('worker')
 
 if __name__ == "__main__":
 
-    with open('worker.config.yml', 'r') as f:
+    with open('send.config.yml', 'r') as f:
         config = yaml.load(f)
 
     # 设定 Logging
     logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s')
 
-    fh = logging.FileHandler('worker.log')
+    fh = logging.FileHandler('send.log')
     fh.setFormatter(logging.Formatter(
         '%(asctime)s - %(levelname)s - %(message)s'))
 

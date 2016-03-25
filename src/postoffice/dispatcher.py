@@ -29,7 +29,7 @@ if __name__ == "__main__":
     # 设定 Logging
     logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s')
 
-    fh = logging.FileHandler('doorman.log')
+    fh = logging.FileHandler('dispatcher.log')
 
     fh.setFormatter(
         logging.Formatter(
@@ -47,10 +47,11 @@ if __name__ == "__main__":
     else:
         logger.setLevel(logging.INFO)
 
-    logger.info('Doorman is running !')
+    logger.info('Dispatcher is running !')
+
+    beanstalk.watch('work')
 
     while True:
-        beanstalk.use('work')
         job = beanstalk.reserve()
         job.delete()
 
@@ -70,6 +71,6 @@ if __name__ == "__main__":
 
         if len(mailto) > 1:
             # 如果mailto 比一个人多, 那么直接给 send work
-            dispatch(email, 'send')
+            dispatch(json.dumps(email), 'send')
         else:
             pass
