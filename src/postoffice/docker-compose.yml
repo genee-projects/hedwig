@@ -5,11 +5,11 @@ beanstalkd:
     - 172.17.0.1:11300:11300
   container_name: beanstalkd
   log_driver: none
-postoffice:
-  container_name: postoffice
+doorman:
+  container_name: doorman
   restart: always
   build: .
-  dockerfile: Dockerfile.postoffice
+  dockerfile: Dockerfile.doorman
   ports:
     - 80:80
   volumes:
@@ -18,11 +18,11 @@ postoffice:
   links:
     - beanstalkd:beanstalkd
   log_driver: none
-worker:
-  container_name: worker
+send:
+  container_name: send
   restart: always
   build: .
-  dockerfile: Dockerfile.worker
+  dockerfile: Dockerfile.send
   volumes:
     - ./:/usr/app/
     - /etc/localtime:/etc/localtime:ro

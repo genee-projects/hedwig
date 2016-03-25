@@ -25,6 +25,7 @@ class Worker(Thread):
         )
 
         while True:
+            beanstalk.use('send')
             job = beanstalk.reserve()
             job.delete()
 

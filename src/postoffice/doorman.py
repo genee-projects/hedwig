@@ -63,6 +63,7 @@ class MainHandler(tornado.web.RequestHandler):
                 if debug:
                     logger.debug(email_content)
 
+                beanstalk.use('work')
                 beanstalk.put(email_content)
 
             except:
@@ -86,15 +87,20 @@ if __name__ == "__main__":
 
     app.listen(80)
 
-    beanstalk = Connection(config.get(
-        'beanstalkd_host', 'localhost'), config.get('beanstalkd_port', 11300))
+    beanstalk = Connection(
+        config.get('beanstalkd_host', 'localhost'),
+        config.get('beanstalkd_port', 11300)
+    )
 
     # 设定 Logging
     logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s')
 
     fh = logging.FileHandler('doorman.log')
-    fh.setFormatter(logging.Formatter(
-        '%(asctime)s - %(levelname)s - %(message)s'))
+    fh.setFormatter(
+        logging.Formatter(
+            '%(asctime)s - %(levelname)s - %(message)s'
+        )
+    )
 
     logger.addHandler(fh)
 
