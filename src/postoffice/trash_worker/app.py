@@ -46,7 +46,7 @@ class Worker(Thread):
 
 if __name__ == "__main__":
 
-    logger = logging.getLogger('app')
+    logger = logging.getLogger(__name__)
 
     with open('config.yml', 'r') as f:
         config = yaml.load(f)
@@ -54,7 +54,7 @@ if __name__ == "__main__":
     # 设定 Logging
     logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s')
 
-    fh = logging.FileHandler('trash.log')
+    fh = logging.FileHandler('app.log')
     fh.setFormatter(logging.Formatter(
         '%(asctime)s - %(levelname)s - %(message)s'))
 
