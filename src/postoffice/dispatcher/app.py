@@ -9,17 +9,36 @@ from pystalkd.Beanstalkd import Connection
 
 
 # 分发 data 到 worker
-def dispatch(data, worker):
-    beanstalk.use(worker)
+def dispatch(data, tube):
+
+    logger.debug('data: {data} push to {tube}'.format(
+        tube=tube,
+        data=data
+    ))
+
+    beanstalk.use(tube)
     beanstalk.put(data)
+
+
+def first_worker():
+
+    return workers[0]
+
+
+# 获取下一个 worker
+def next_worker(worker):
+
+    index = workers.index(worker)
+    return workers[index + 1]
 
 
 if __name__ == "__main__":
 
     logger = logging.getLogger('dispatcher')
 
-    with open('dispatcher.config.yml', 'r') as f:
+    with open('config.yml', 'r') as f:
         config = yaml.load(f)
+        workers = config.get('workers', [])
 
     beanstalk = Connection(
         config.get('beanstalkd_host', 'localhost'),
@@ -49,17 +68,23 @@ if __name__ == "__main__":
 
     logger.info('Dispatcher is running !')
 
-    beanstalk.watch('work')
+    beanstalk.watch('porch')
 
     while True:
+
         job = beanstalk.reserve()
         job.delete()
 
         email = json.loads(job.body)
 
+        # 邮件相关信息
         mailto = email['to']
         mailfrom = email['from']
         maildata = email['data']
+
+        # 数据相关信息
+        worker = email.get('worker', None)
+        trash = email.get('trash', False)
 
         logger.debug(
             'rcpttos: {r}, mailfrom: {f}, data: {d}'.format(
@@ -69,8 +94,17 @@ if __name__ == "__main__":
             )
         )
 
-        if len(mailto) > 1:
-            # 如果mailto 比一个人多, 那么直接给 send work
-            dispatch(json.dumps(email), 'send')
+        data = json.dumps(email)
+
+        if len(mailto) == 1:
+            # 如果要丢到垃圾桶里面, 那么, 丢
+            if trash:
+                dispatch(data, 'trash')
+            elif worker is None:
+                # 如果 worker 为 None, 那么发给第一个, 其他的发给下一个
+                dispatch(data, first_worker())
+            else:
+                dispatch(data, next_worker(worker))
         else:
-            pass
+            # 如果mailto 比一个人多, 那么直接给 send worker, 让 send worker 进行处理
+            dispatch(data, 'send')

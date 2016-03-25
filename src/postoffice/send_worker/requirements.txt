@@ -1,0 +1,3 @@
+PyYAML==3.11
+dnspython3==1.12.0
+pystalkd==1.2.1

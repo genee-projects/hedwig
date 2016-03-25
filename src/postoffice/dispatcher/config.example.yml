@@ -1,0 +1,9 @@
+---
+debug: true
+beanstalkd_host: beanstalkd
+beanstalkd_port: 11300
+workers:
+  - merge
+  - limit
+  - send
+...

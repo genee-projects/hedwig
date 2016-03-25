@@ -80,11 +80,11 @@ class Worker(Thread):
                     mta.quit()
 
 
-logger = logging.getLogger('worker')
+logger = logging.getLogger('send_worker')
 
 if __name__ == "__main__":
 
-    with open('send.config.yml', 'r') as f:
+    with open('config.yml', 'r') as f:
         config = yaml.load(f)
 
     # 设定 Logging

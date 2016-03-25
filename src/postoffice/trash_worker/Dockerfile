@@ -1,0 +1,9 @@
+FROM genee/python:latest
+
+VOLUME /usr/app
+WORKDIR /usr/app
+
+COPY requirements.txt /usr/app/requirements.txt
+RUN pip3 install -r /usr/app/requirements.txt
+
+ENTRYPOINT ["/usr/bin/python3", "/usr/app/app.py"]

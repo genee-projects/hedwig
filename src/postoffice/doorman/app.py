@@ -63,7 +63,7 @@ class MainHandler(tornado.web.RequestHandler):
                 if debug:
                     logger.debug(email_content)
 
-                beanstalk.use('work')
+                beanstalk.use('porch')
                 beanstalk.put(email_content)
 
             except:
@@ -81,7 +81,7 @@ def make_app():
 if __name__ == "__main__":
     app = make_app()
 
-    with open('doorman.config.yml', 'r') as f:
+    with open('config.yml', 'r') as f:
         config = yaml.load(f)
         app.kv = config.get('clients', {})
 

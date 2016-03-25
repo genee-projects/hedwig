@@ -9,11 +9,11 @@ doorman:
   container_name: doorman
   restart: always
   build: .
-  dockerfile: Dockerfile.doorman
+  dockerfile: doorman/Dockerfile
   ports:
     - 80:80
   volumes:
-    - ./:/usr/app/
+    - ./doorman/:/usr/app/
     - /etc/localtime:/etc/localtime:ro
   links:
     - beanstalkd:beanstalkd
@@ -22,20 +22,31 @@ dispatcher:
   container_name: dispatcher
   restart: always
   build: .
-  dockerfile: Dockerfile.dispatcher
+  dockerfile: dispatcher/Dockerfile
   volumes:
-    - ./:/usr/app/
+    - ./dispatcher/:/usr/app/
     - /etc/localtime:/etc/localtime:ro
   links:
     - beanstalkd:beanstalkd
   log_driver: none
-send:
-  container_name: send
+send_worker:
+  container_name: send_worker
   restart: always
   build: .
-  dockerfile: Dockerfile.send
+  dockerfile: send_worker/Dockerfile
   volumes:
-    - ./:/usr/app/
+    - ./send_worker/:/usr/app/
+    - /etc/localtime:/etc/localtime:ro
+  links:
+    - beanstalkd:beanstalkd
+  log_driver: none
+trash_worker:
+  container_name: trash_worker
+  restart: always
+  build: .
+  dockerfile: trash_worker/Dockerfile
+  volumes:
+    - ./trash_worker/:/usr/app/
     - /etc/localtime:/etc/localtime:ro
   links:
     - beanstalkd:beanstalkd
