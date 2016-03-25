@@ -164,3 +164,7 @@ Hello Stenote !
 ```
 cat sample_email.txt | msmtp --debug stenote@163.com
 ```
+
+## 其他设计文档
+
+* [postoffice 工作流程](design/postoffice.md)
