@@ -11,7 +11,7 @@ import json
 from email.parser import Parser
 from pystalkd.Beanstalkd import Connection
 
-logger = logging.getLogger('postoffice')
+logger = logging.getLogger('doorman')
 
 
 class MainHandler(tornado.web.RequestHandler):
@@ -29,6 +29,9 @@ class MainHandler(tornado.web.RequestHandler):
             self.authorized = True
         else:
             self.authorized = False
+
+    def get(self):
+        pass
 
     # 处理请求
     def post(self):
@@ -77,7 +80,7 @@ def make_app():
 if __name__ == "__main__":
     app = make_app()
 
-    with open('postoffice.config.yml', 'r') as f:
+    with open('doorman.config.yml', 'r') as f:
         config = yaml.load(f)
         app.kv = config.get('clients', {})
 
@@ -89,7 +92,7 @@ if __name__ == "__main__":
     # 设定 Logging
     logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s')
 
-    fh = logging.FileHandler('postoffice.log')
+    fh = logging.FileHandler('doorman.log')
     fh.setFormatter(logging.Formatter(
         '%(asctime)s - %(levelname)s - %(message)s'))
 
@@ -103,6 +106,6 @@ if __name__ == "__main__":
     else:
         logger.setLevel(logging.INFO)
 
-    logger.info('Postoffice is running !')
+    logger.info('Doorman is running !')
 
     tornado.ioloop.IOLoop.current().start()

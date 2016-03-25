@@ -19,7 +19,7 @@ s = """
 fqdn: $fqdn
 key: $key
 
-请复制如下内容到 postoffice 的 postoffice.config.yml 中的 (clients 不要重复):
+请复制如下内容到 postoffice 的 doorman.config.yml 中的 (clients 不要重复):
 
 clients:
   $fqdn: $key
