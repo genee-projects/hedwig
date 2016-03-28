@@ -31,7 +31,7 @@ class Worker(Thread):
             email = json.loads(job.body)
 
             mailto = email['to']
-            mailfrom = email['from']
+            mailfrom = config.get('mailfrom', 'sender@robot.genee.cn')
             maildata = email['data']
 
             logger.debug(
