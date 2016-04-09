@@ -17,7 +17,7 @@ import yaml
 import json
 import logging
 
-__version__ = '0.1.4'
+__version__ = '0.1.5'
 
 class Owl(smtpd.SMTPServer):
     """
@@ -98,7 +98,7 @@ def main():
         config = yaml.load(f)
 
     # 设定 Logging
-    logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s')
+    logging.basicConfig(format='[%(levelname)s] %(message)s')
     if config.get('debug', False):
         logger.setLevel(logging.DEBUG)
     else:

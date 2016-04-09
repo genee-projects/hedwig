@@ -13,7 +13,7 @@ import smtplib
 
 from tornado import gen
 
-logger = logging.getLogger('hedwig.nest.worker')
+logger = logging.getLogger('hedwig.nest')
 
 class Worker:
 

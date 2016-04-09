@@ -20,7 +20,7 @@ from tornado.queues import Queue
 
 from hedwig.nest.worker import Worker
 
-__version__ = '0.1.5'
+__version__ = '0.1.6'
 
 class MainHandler(RequestHandler):
 
@@ -102,7 +102,7 @@ def main():
         config = yaml.load(f)
 
     # 设定 Logging
-    logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s')
+    logging.basicConfig(format='[%(levelname)s] %(message)s')
     if config.get('debug', False):
         logger.setLevel(logging.DEBUG)
     else:
