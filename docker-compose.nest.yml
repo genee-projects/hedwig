@@ -1,4 +1,5 @@
 nest:
+  image: genee/hedwig-nest
   container_name: hedwig-nest
   restart: always
   build: .

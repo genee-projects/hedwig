@@ -1,4 +1,5 @@
 owl:
+  image: genee/hedwig-owl
   container_name: hedwig-owl
   restart: always
   build: .
