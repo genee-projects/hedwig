@@ -1,0 +1,9 @@
+nest:
+  container_name: hedwig-nest
+  restart: always
+  build: .
+  dockerfile: Dockerfile.nest
+  ports:
+    - 80:80
+  volumes:
+    - /etc/localtime:/etc/localtime:ro

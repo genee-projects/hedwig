@@ -1,0 +1,9 @@
+owl:
+  container_name: hedwig-owl
+  restart: always
+  build: .
+  dockerfile: Dockerfile.owl
+  ports:
+    - 172.17.0.1:25
+  volumes:
+    - /etc/localtime:/etc/localtime:ro

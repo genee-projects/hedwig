@@ -1,0 +1,7 @@
+clients:
+  YOUR_FQDN1: YOUR_KEY1
+  YOUR_FQDN2: YOUR_KEY2
+listen:
+  host: 0.0.0.0
+  port: 80
+# debug: true

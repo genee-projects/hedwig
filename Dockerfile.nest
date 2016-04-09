@@ -1,0 +1,8 @@
+FROM alpine:3.3
+
+RUN apk add --update py-pip && pip install hedwig-nest && rm -rf /var/cache/apk && rm -rf /root/.cache
+
+VOLUME ["/etc/hedwig"]
+EXPOSE 80
+
+CMD ["/usr/bin/hedwig-nest", "-c", "/etc/hedwig/nest.conf.yml"]
