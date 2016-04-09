@@ -1,10 +1,14 @@
-nest:
-  image: genee/hedwig-nest
-  container_name: hedwig-nest
-  restart: always
-  build: .
-  dockerfile: Dockerfile.nest
-  ports:
-    - 80:80
-  volumes:
-    - /etc/localtime:/etc/localtime:ro
+version: '2'
+services:
+  nest:
+    container_name: hedwig-nest
+    restart: always
+    image: genee/hedwig-nest
+    build:
+      context: .
+      dockerfile: Dockerfile.nest
+    ports:
+      - 80:80
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./etc/hedwig:/etc/hedwig
