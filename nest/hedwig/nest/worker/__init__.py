@@ -35,8 +35,13 @@ class Worker:
                 sender=sender, recipient=recipient, subject=subject))
 
             domain = recipient.split('@')[-1]
-            server = str(dns.resolver.query(domain, 'MX')[0].exchange)
-            
+
+            try:
+                server = str(dns.resolver.query(domain, 'MX')[0].exchange)
+            except Exception as err:
+                logger.warning('[FAIL] DNS Error: {err}'.format(err=str(err)))
+                continue
+
             logger.debug('MX({recipient}) = {server}'.format(
                 recipient=recipient,
                 server=server
