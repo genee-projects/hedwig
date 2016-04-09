@@ -1,14 +1,14 @@
 version: '2'
 services:
-  owl:
-    container_name: hedwig-owl
+  nest:
+    container_name: hedwig-nest
     restart: always
-    image: genee/hedwig-owl
+    image: genee/hedwig-nest
     build:
       context: .
-      dockerfile: Dockerfile.owl
+      dockerfile: Dockerfile
     ports:
-      - 172.17.0.1:25
+      - 80:80
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./etc/hedwig:/etc/hedwig

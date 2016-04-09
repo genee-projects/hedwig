@@ -1,6 +1,6 @@
 FROM alpine:3.3
 
-RUN apk add --update py-pip && pip install -U hedwig-nest && rm -rf /var/cache/apk && rm -rf /root/.cache
+RUN apk add --update py-pip && pip install hedwig-nest && rm -rf /var/cache/apk && rm -rf /root/.cache
 
 VOLUME ["/etc/hedwig"]
 EXPOSE 80

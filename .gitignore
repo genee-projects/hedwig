@@ -71,3 +71,5 @@ target/
 
 .idea
 .DS_Store
+
+*.conf.yml
