@@ -20,7 +20,7 @@ from tornado.queues import Queue
 
 from hedwig.nest.worker import Worker
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 
 class MainHandler(RequestHandler):
 
@@ -34,6 +34,8 @@ class MainHandler(RequestHandler):
     def initialize(self):
 
         secret = self.get_argument('secret', None)
+        if secret is None:
+            secret = self.get_argument('key', None)
         fqdn = self.get_argument('fqdn', None)
 
         if fqdn in app.clients and app.clients.get(fqdn, None) == secret:
@@ -51,7 +53,7 @@ class MainHandler(RequestHandler):
             sender = mail['from']
             recipients = mail['to']
 
-            if not 'to' in mail or not 'from' in mail:
+            if len(recipients) == 0:
                 self.send_error(status_code=406)
                 logger.error('Invalid Message!')
                 return
