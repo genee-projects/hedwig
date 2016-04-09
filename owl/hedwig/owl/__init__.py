@@ -17,7 +17,7 @@ import yaml
 import json
 import logging
 
-__version__ = '0.1.3'
+__version__ = '0.1.4'
 
 class Owl(smtpd.SMTPServer):
     """
@@ -32,8 +32,6 @@ class Owl(smtpd.SMTPServer):
     def process_message(self, peer, mailfrom, rcpttos, data, **kwargs):
 
         global config, logger
-
-        logger.info(config)
 
         msg = email.message_from_string(data)
 
