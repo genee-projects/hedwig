@@ -25,17 +25,16 @@ def find_version(*file_paths):
         return version_match.group(1)
     raise RuntimeError("Unable to find version string.")
 
-install_requires = {
-    'nest': [
-        'PyYAML',
-        'tornado',
-        'dnspython',
-    ],
-    'owl': [
-        'PyYAML',
-        'requests',
-    ]
-}
+nest_requires = [
+    'PyYAML',
+    'tornado',
+    'dnspython',
+]
+
+owl_requires = [
+    'PyYAML',
+    'requests',
+]
 
 setup(
     name='hedwig-nest',
@@ -54,7 +53,7 @@ setup(
     ],
     keywords='hedwig',
     packages=find_packages(exclude=['tests.*', 'tests']),
-    install_requires=install_requires['nest'],
+    install_requires=nest_requires,
     entry_points={
         'console_scripts': [
             'hedwig-nest=hedwig.nest:main',
@@ -65,7 +64,7 @@ setup(
 setup(
     name='hedwig-owl',
     version=find_version("hedwig/owl", "__init__.py"),
-    description='Hedwig Nest for Mail Dispatching',
+    description='Hedwig Owl to Send Mails',
     url='https://github.com/genee-projects/hedwig',
     author="Jia Huang",
     author_email="iamfat@gmail.com",
@@ -79,7 +78,7 @@ setup(
     ],
     keywords='hedwig',
     packages=find_packages(exclude=['tests.*', 'tests']),
-    install_requires=install_requires['owl'],
+    install_requires=owl_requires,
     entry_points={
         'console_scripts': [
             'hedwig-owl=hedwig.owl:main',
