@@ -17,7 +17,7 @@ import yaml
 import json
 import logging
 
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 
 class Owl(smtpd.SMTPServer):
     """
@@ -107,13 +107,10 @@ def main():
         logger.setLevel(logging.INFO)
 
     listen_config = config.get('listen', { 'host': '0.0.0.0', 'port': 25 })
-    try:
-        owl = Owl((listen_config['host'], listen_config['port']), None)
-        logger.info('Hedwig Owl is sitting on {host}:{port}...'.format(
-            host=listen_config['host'], port=listen_config['port']))
-        asyncore.loop()
-    finally:
-        owl.close()
+    owl = Owl((listen_config['host'], listen_config['port']), None)
+    logger.info('Hedwig Owl is sitting on {host}:{port}...'.format(
+        host=listen_config['host'], port=listen_config['port']))
+    asyncore.loop()
 
 logger = logging.getLogger('hedwig.owl')
 config = {}
