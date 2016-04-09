@@ -3,6 +3,7 @@
 
 import dns.resolver
 import smtplib
+import email
 import json
 import logging
 import yaml
@@ -10,7 +11,6 @@ import yaml
 from pystalkd.Beanstalkd import Connection
 
 from threading import Thread
-
 
 class Worker(Thread):
     """
@@ -28,22 +28,19 @@ class Worker(Thread):
             job = beanstalk.reserve()
             job.delete()
 
-            email = json.loads(job.body)
+            mail_data = json.loads(job.body)
 
-            mailto = email['to']
-            mailfrom = config.get('mailfrom', 'sender@robot.genee.cn')
-            maildata = email['data']
+            mail_to = mail_data['to']
+            # mail_from = email['from']
+            mail_from = config.get('mail_from', 'sender@robot.genee.cn');
+            mail_message = email.message_from_string(mail_data['data'])
 
-            logger.debug(
-                'rcpttos: {r}, mailfrom: {f}, data: {d}'.format(
-                    r=json.dumps(mailto),
-                    f=mailfrom,
-                    d=maildata
-                )
-            )
+            logger.info('{from} => {to}: {subject}'.format(to=json.dumps(mail_to), 
+                            from=mail_from, subject=mail_message['subject']))
+            logger.debug('============\n{d}\n============'.format(d=mail_message.as_string()))
 
             # 遍历收件人
-            for r in mailto:
+            for r in mail_to:
 
                 # 进行遍历, 获取到所有的.
                 domain = r.split('@')[-1]
@@ -52,28 +49,28 @@ class Worker(Thread):
                 answers = dns.resolver.query(domain, 'MX')
                 mx_domain = str(answers[0].exchange)
 
-                logger.info('check mx_domain, {rcptto} -> {mx_domain}'.format(
+                logger.debug('MX({rcptto}): {mx_domain}'.format(
                     rcptto=r,
                     mx_domain=mx_domain
                 ))
 
                 try:
-                    mta = smtplib.SMTP(mx_domain)
-
+                    mta = smtplib.SMTP(host=mx_domain, timeout=20)
                     if debug:
                         mta.set_debuglevel(1)
-
-                    mta.sendmail(from_addr=mailfrom,
-                                 to_addrs=mailto, msg=maildata)
+                    mta.sendmail(from_addr=mail_from, to_addrs=mail_to, msg=mail_message.as_string())
                 except smtplib.SMTPException as e:
                     logger.warning(
-                        '发送失败! from: {f}, to: {t}, data: {d}'.format(
-                            f=mailfrom,
-                            t=json.dumps(mailto),
-                            d=maildata
+                        'SMTP Error: from: {f}, to: {t}, subject: {s}, reason: {r}'.format(
+                            f=mail_from,
+                            t=json.dumps(mail_to),
+                            s=mail_message['subject']
+                            r=str(e)
                         )
                     )
-                    logger.info('失败原因: {r}'.format(r=str(e)))
+                    logger.debug('============\n{d}\n============'.format(d=mail_message.as_string()))
+                except Exception as err:
+                    logger.warning('System Error: {err}'.format(err=str(err)))
                 finally:
                     mta.quit()
 
