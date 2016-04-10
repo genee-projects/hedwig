@@ -20,7 +20,7 @@ from tornado.queues import Queue
 
 from hedwig.nest.worker import Worker
 
-__version__ = '0.1.6'
+__version__ = '0.1.7'
 
 class MainHandler(RequestHandler):
 

@@ -34,23 +34,21 @@ class Worker:
             logger.debug('[SENDING] {sender} => {recipient}: "{subject}"'.format(
                 sender=sender, recipient=recipient, subject=subject))
 
-            domain = recipient.split('@')[-1]
-
             try:
-                server = str(dns.resolver.query(domain, 'MX')[0].exchange)
+                domain = recipient.split('@')[-1]
+                answer = dns.resolver.query(domain, 'MX')
+                server = str(answer[0].exchange)
+                logger.debug('MX({recipient}) = {server}'.format(
+                    recipient=recipient,
+                    server=server
+                ))
             except Exception as err:
-                logger.warning('[FAIL] DNS Error: {err}'.format(err=str(err)))
+                logger.warning('[FAIL] Query MX({recipient}): {err}'.format(recipient=recipient, err=str(err)))
                 continue
 
-            logger.debug('MX({recipient}) = {server}'.format(
-                recipient=recipient,
-                server=server
-            ))
-
+            mta = smtplib.SMTP(host=server, timeout=20)
             try:
-                mta = smtplib.SMTP(host=server, timeout=20)
                 mta.sendmail(from_addr=sender, to_addrs=recipient, msg=msg.as_string())
-
                 logger.info('[SENT] {sender} => {recipient}: "{subject}"'.format(
                     sender=sender,
                     recipient=recipient,
