@@ -18,9 +18,9 @@ from tornado.ioloop import IOLoop
 from tornado.web import Application, RequestHandler
 from tornado.queues import Queue
 
-from hedwig.nest.worker import Worker
+from . import worker
 
-__version__ = '0.1.8'
+__version__ = '0.1.9'
 
 class MainHandler(RequestHandler):
 
@@ -72,15 +72,24 @@ class MainHandler(RequestHandler):
 
 @gen.coroutine
 def message_consumer():
-    worker = Worker()
+    w = worker.Worker()
     while True:
         msg = yield msg_queue.get()
         try:
-            yield worker.put(msg)
+            yield w.put(msg)
         finally:
             msg_queue.task_done()
 
 def main():
+
+    global config, logger, msg_queue, app
+
+    logger = logging.getLogger('hedwig.nest')
+    msg_queue = Queue(maxsize=2)
+    app = Application([
+        (r"/", MainHandler),
+    ])
+    config = {}
 
     try:
         opts, _ = getopt.gnu_getopt(sys.argv[1:], "vc:", ["version", "config"])
@@ -97,7 +106,6 @@ def main():
             configFile = arg
             break
 
-    global config, logger, app
     with open(configFile, 'r') as f:
         config = yaml.load(f)
 
@@ -118,12 +126,5 @@ def main():
     IOLoop.current().spawn_callback(message_consumer)
     IOLoop.current().start()
 
-logger = logging.getLogger('hedwig.nest')
-msg_queue = Queue(maxsize=2)
-app = Application([
-    (r"/", MainHandler),
-])
-config = {}
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

@@ -78,6 +78,10 @@ class Owl(smtpd.SMTPServer):
 
 def main():
 
+    global config, logger
+
+    logger = logging.getLogger('hedwig.owl')
+
     try:
         opts, _ = getopt.gnu_getopt(sys.argv[1:], "vc:", ["version", "config"])
     except getopt.GetoptError as _:
@@ -93,7 +97,7 @@ def main():
             configFile = arg
             break
 
-    global config, logger
+    config = {}
     with open(configFile, 'r') as f:
         config = yaml.load(f)
 
@@ -110,8 +114,5 @@ def main():
         host=listen_config['host'], port=listen_config['port']))
     asyncore.loop()
 
-logger = logging.getLogger('hedwig.owl')
-config = {}
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

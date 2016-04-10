@@ -33,6 +33,7 @@ nest_requires = [
     'PyYAML',
     'tornado',
     'dnspython',
+    'pyIsEmail'
 ]
 
 setup(

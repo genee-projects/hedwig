@@ -12,6 +12,7 @@ import logging
 import smtplib
 
 from tornado import gen
+from pyisemail import is_email
 
 logger = logging.getLogger('hedwig.nest')
 
@@ -31,7 +32,12 @@ class Worker:
         subject = self.decode_header(msg['subject'])
 
         for recipient in recipients:
-            logger.info('[SENDING] {sender} => {recipient}: "{subject}"'.format(
+            if not is_email(recipient):
+                logger.error('{sender} => {recipient}: "{subject}"'.format(
+                    sender=sender, recipient=recipient, subject=subject))
+                continue
+
+            logger.info('{sender} => {recipient}: "{subject}"'.format(
                 sender=sender, recipient=recipient, subject=subject))
 
             try:
@@ -43,7 +49,7 @@ class Worker:
                     server=server
                 ))
             except Exception as err:
-                logger.warning('[FAIL] Query MX({recipient}): {err}'.format(recipient=recipient, err=str(err)))
+                logger.error('Query MX({recipient}): {err}'.format(recipient=recipient, err=str(err)))
                 continue
 
             try:
@@ -51,8 +57,8 @@ class Worker:
                 mta.sendmail(from_addr=sender, to_addrs=recipient, msg=msg.as_string())
                 mta.quit()
             except smtplib.SMTPException as err:
-                logger.warning(
-                    '[FAIL] SMTP Error: {sender} => {recipient}: "{subject}"\nreason: {reason}'.format(
+                logger.error(
+                    'SMTP Error: {sender} => {recipient}: "{subject}"\nreason: {reason}'.format(
                         sender=sender,
                         recipient=recipient,
                         subject=subject,
@@ -61,5 +67,5 @@ class Worker:
                 )
                 logger.debug('============\n{mail}\n============'.format(mail=self.brief_mail(msg)))
             except Exception as err:
-                logger.warning('[FAIL] System Error: {err}'.format(err=str(err)))
+                logger.error('System Error: {err}'.format(err=str(err)))
 
