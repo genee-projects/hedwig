@@ -1,6 +1,7 @@
 FROM alpine:3.3
 
-RUN apk add --update py-pip && pip install hedwig-owl && rm -rf /var/cache/apk && rm -rf /root/.cache
+ADD . /app
+RUN apk add --update py-setuptools && rm -rf /var/cache/apk && cd /app && python setup.py install
 
 VOLUME ["/etc/hedwig"]
 EXPOSE 25

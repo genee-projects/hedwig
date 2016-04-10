@@ -31,7 +31,7 @@ class Worker:
         subject = self.decode_header(msg['subject'])
 
         for recipient in recipients:
-            logger.debug('[SENDING] {sender} => {recipient}: "{subject}"'.format(
+            logger.info('[SENDING] {sender} => {recipient}: "{subject}"'.format(
                 sender=sender, recipient=recipient, subject=subject))
 
             try:
@@ -46,14 +46,10 @@ class Worker:
                 logger.warning('[FAIL] Query MX({recipient}): {err}'.format(recipient=recipient, err=str(err)))
                 continue
 
-            mta = smtplib.SMTP(host=server, timeout=20)
             try:
+                mta = smtplib.SMTP(host=server, timeout=20)
                 mta.sendmail(from_addr=sender, to_addrs=recipient, msg=msg.as_string())
-                logger.info('[SENT] {sender} => {recipient}: "{subject}"'.format(
-                    sender=sender,
-                    recipient=recipient,
-                    subject=subject
-                ))
+                mta.quit()
             except smtplib.SMTPException as err:
                 logger.warning(
                     '[FAIL] SMTP Error: {sender} => {recipient}: "{subject}"\nreason: {reason}'.format(
@@ -66,6 +62,4 @@ class Worker:
                 logger.debug('============\n{mail}\n============'.format(mail=self.brief_mail(msg)))
             except Exception as err:
                 logger.warning('[FAIL] System Error: {err}'.format(err=str(err)))
-            finally:
-                mta.quit()
 

@@ -11,6 +11,10 @@ import sys
 from setuptools import find_packages
 from setuptools import setup
 
+# disable ssl verify since it might failed during docker-build
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
+
 def read(*parts):
     path = os.path.join(os.path.dirname(__file__), *parts)
     with codecs.open(path, encoding='utf-8') as fobj:
