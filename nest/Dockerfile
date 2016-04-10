@@ -1,7 +1,8 @@
 FROM alpine:3.3
 
 ADD . /app
-RUN apk add --update py-setuptools && rm -rf /var/cache/apk && cd /app && python setup.py install
+RUN apk add --update py-setuptools && rm -rf /var/cache/apk \
+    && cd /app && python setup.py install && rm -rf /app && rm -rf /root/.cache
 
 VOLUME ["/etc/hedwig"]
 EXPOSE 80
