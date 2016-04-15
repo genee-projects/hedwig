@@ -1,8 +1,4 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from __future__ import unicode_literals
-
 import codecs
 import os
 import re
@@ -32,7 +28,7 @@ def find_version(*file_paths):
 nest_requires = [
     'PyYAML',
     'tornado',
-    'dnspython',
+    'dnspython3',
     'pyIsEmail'
 ]
 

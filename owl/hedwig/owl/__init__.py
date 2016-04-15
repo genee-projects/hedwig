@@ -1,9 +1,4 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-from __future__ import absolute_import
-from __future__ import print_function
-
 import sys
 import getopt
 import asyncore
@@ -16,6 +11,7 @@ import requests
 import yaml
 import json
 import logging
+from functools import reduce
 
 __version__ = '0.1.5'
 

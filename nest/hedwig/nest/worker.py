@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import absolute_import
-from __future__ import print_function
+
+
 
 import email
 import email.header
@@ -13,6 +13,7 @@ import smtplib
 
 from tornado import gen
 from pyisemail import is_email
+from functools import reduce
 
 logger = logging.getLogger('hedwig.nest')
 
