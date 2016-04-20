@@ -65,7 +65,7 @@ class Owl(smtpd.SMTPServer):
             logger.error(
                 'Error: {nest}: {reason}'.format(
                     nest=nest,
-                    reason=str(err)
+                    reason=err
                 )
             )
 

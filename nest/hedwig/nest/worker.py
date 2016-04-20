@@ -44,13 +44,13 @@ class Worker:
             try:
                 domain = recipient.split('@')[-1]
                 answer = dns.resolver.query(domain, 'MX')
-                server = str(answer[0].exchange)
+                server = answer[0].exchange.to_text(omit_final_dot=True)
                 logger.debug('MX({recipient}) = {server}'.format(
                     recipient=recipient,
                     server=server
                 ))
             except Exception as err:
-                logger.error('Query MX({recipient}): {err}'.format(recipient=recipient, err=str(err)))
+                logger.error('Query MX({recipient}): {err}'.format(recipient=recipient, err=err))
                 continue
 
             try:
@@ -63,10 +63,11 @@ class Worker:
                         sender=sender,
                         recipient=recipient,
                         subject=subject,
-                        reason=str(err)
+                        reason=err
                     )
                 )
-                logger.debug('============\n{mail}\n============'.format(mail=self.brief_mail(msg)))
+                logger.debug('============\n{mail}\n============'
+                    .format(mail=self.brief_mail(msg)))
             except Exception as err:
-                logger.error('System Error: {err}'.format(err=str(err)))
+                logger.error('System Error: {err}'.format(err=err))
 
