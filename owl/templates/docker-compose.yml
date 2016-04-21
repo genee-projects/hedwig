@@ -1,0 +1,15 @@
+version: '2'
+services:
+  owl:
+    container_name: hedwig-owl
+    restart: always
+    image: genee/hedwig-owl
+    ports:
+    - {{OWL_ADDR}}:25
+    volumes:
+    - /etc/localtime:/etc/localtime:ro
+    - ./etc/hedwig:/etc/hedwig
+    logging:
+      driver: syslog
+      options:
+        tag: "{{.Name}}/{{.ID}}"

@@ -10,7 +10,7 @@ hedwig (海德薇, 哈利波特的猫头鹰) 一个用来进行邮件发送队�
 
 ## nest
 
-`nest` 为邮件发送服务器, 接收到来自 `owl` 发送的邮件后, `nest` 提送邮件到 **MQ** 系统, 由对接 **MQ** 系统的 `worker` 查询收件人地址后直接进行投递, 完成邮件发送
+`nest` 为邮件发送服务器, 接收到来自 `owl` 发送的邮件后, `nest` 提送邮件到 **内部MQ** , 然后由 `worker` 查询收件人地址后直接进行投递, 完成邮件发送
 
 ## 投递流程
 
@@ -52,35 +52,7 @@ hedwig (海德薇, 哈利波特的猫头鹰) 一个用来进行邮件发送队�
 
 ## 部署文档
 
-### owl
-
-#### 安装依赖
-
-* docker
-* docker-compose (依赖 python, python-pip)
-* msmtp
-
-#### 部署步骤
-
-1. 首先, 需要确定宿主机 `docker0` 网卡地址为 **172.17.42.1** 还是 **172.17.0.1** (通常情况下 `docker version` 为 1.6.0 以前的, 为 **172.17.42.1**, 之后的为 **172.17.0.1**)
-
-2. 明确欲发送邮件的容器或者宿主机是否安装了 `msmtp`。 安装方法: `sudo apt-get install msmtp`
-
-3. 与发送邮件的容器或者宿主机中 `/etc/msmtprc` 中增加如下配置, 需要注意, `host` 为上述 **步骤 1** 中明确的网卡地址
-
-	```
-	defaults
-	syslog LOG_MAIL
-	account default
-	host 172.17.0.1
-	from sender@robot.genee.cn
-	```
-
-4. 在宿主机中, 进入该项目的 `src/owl`. 修改 `docker-compose.yml` 配置中的 `172.17.0.1:25:25` 中的 IP 地址为 **步骤 1** 中明确的网卡地址
-
-6. 执行 `docker-compose up -d` 进行 `owl` 部署
-
-### nest
+### hedwig-owl
 
 #### 安装依赖
 
@@ -89,12 +61,38 @@ hedwig (海德薇, 哈利波特的猫头鹰) 一个用来进行邮件发送队�
 
 #### 部署步骤
 
-1. 在宿主机中, 进入该项目的 `src/nest` 中, 在 `config.yml` 中的填写各个节点的配置信息后保存
-2. 执行 `docker-compose up -d` 进行 `nest` 部署
+```bash
+TARGET_DIR=/data/containers/hedwig-owl
+# 环境变量按照自己需要调整
+docker run --rm -v ${TARGET_DIR}:/target \
+	-v NEST_ADDR="172.17.0.1:8787" \
+	genee/hedwig-owl install
+cd ${TARGET_DIR} && docker-compose up -d
+```
 
-#### 部署注意事项
 
-1. `nest` 服务对应的配置文件为 `nest.conf.yml`
+### hedwig-nest
+
+#### 安装依赖
+
+* docker
+* docker-compose (依赖 python, python-pip)
+
+#### 部署步骤
+
+```bash
+TARGET_DIR=/data/containers/hedwig-nest
+# 环境变量按照自己需要调整
+docker run --rm -v ${TARGET_DIR}:/target \
+	-v NEST_ADDR="http://robot.genee.cn" \
+	-v OWL_ID="XXXX" \
+	-v OWL_SECRET="XXXX" \
+	-v OWL_ADDR="172.17.0.1:25" \
+	genee/hedwig-nest install
+	
+cd ${TARGET_DIR} && docker-compose up -d
+
+```
 
 ## HTTP 协议接口 (nest http 接口)
 
@@ -146,16 +144,15 @@ hedwig (海德薇, 哈利波特的猫头鹰) 一个用来进行邮件发送队�
 
 ```
 From: sender@robot.genee.cn
-To: stenote@163.com
+To: your@email.com
 Subject: Hello World
 
 
 Hello Stenote !
 ```
-如上内容为上述接口中使用的 `data` 内容
 
 执行如下命令进行邮件发送:
 
 ```
-cat sample_email.txt | msmtp --debug stenote@163.com
+cat sample_email.txt | sendmail your@email.com
 ```

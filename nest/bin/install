@@ -1,0 +1,8 @@
+#!/bin/sh
+
+TARGET_DIR=/target
+
+mkdir -p $TARGET_DIR/etc/hedwig
+
+sed "s/{{NEST_ADDR}}/$NEST_ADDR/g" /app/templates/docker-compose.yml > $TARGET_DIR/docker-compose.yml
+cp /app/templates/nest.conf.yml $TARGET_DIR/etc/hedwig/nest.conf.yml

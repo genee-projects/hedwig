@@ -1,0 +1,6 @@
+nest: {{NEST_ADDR}}
+fqdn: {{OWL_ID}}
+secret: {{OWL_SECRET}}
+listen:
+  host:0.0.0.0
+  port:25

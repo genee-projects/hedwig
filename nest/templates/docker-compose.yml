@@ -1,0 +1,15 @@
+version: '2'
+services:
+  nest:
+    container_name: hedwig-nest
+    restart: always
+    image: genee/hedwig-nest
+    ports:
+    - {{NEST_LISTEN_AT}}:80
+    volumes:
+    - /etc/localtime:/etc/localtime:ro
+    - ./etc/hedwig:/etc/hedwig
+    logging:
+      driver: syslog
+      options:
+        tag: "{{.Name}}/{{.ID}}"

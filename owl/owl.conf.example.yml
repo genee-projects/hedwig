@@ -1,7 +1,0 @@
-nest: http://robot.genee.cn
-fqdn: YOUR_FQDN
-secret: YOUR_SCRET
-listen:
-  host:0.0.0.0
-  port:25
-# debug: false
