@@ -19,7 +19,7 @@ __version__ = '0.1.9'
 
 class MainHandler(RequestHandler):
 
-    authorized = False
+    client = None
     dns = {}
 
     def brief_mail(self, msg):
@@ -34,15 +34,18 @@ class MainHandler(RequestHandler):
         fqdn = self.get_argument('fqdn', None)
 
         if fqdn in app.clients and app.clients.get(fqdn, None) == secret:
-            self.authorized = True
+            self.client = fqdn
         else:
-            self.authorized = False
+            self.client = None
 
     # 处理请求
     @gen.coroutine
     def post(self):
 
-        if self.authorized:
+        if self.client:
+
+            client = self.client
+            remote_ip = self.request.headers.get('X-Real-Ip') or self.request.remote_ip
 
             mail = json.loads(self.get_argument('email'))
             sender = mail['from']
@@ -60,7 +63,7 @@ class MainHandler(RequestHandler):
             # override from
             sender = config.get('mail_from', 'Genee Sender <sender@robot.genee.cn>')
 
-            yield msg_queue.put([sender, recipients, msg])
+            yield msg_queue.put([client, remote_ip, sender, recipients, msg])
 
         else:
             self.send_error(status_code=401)

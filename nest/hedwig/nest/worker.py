@@ -28,29 +28,31 @@ class Worker:
     @gen.coroutine
     def put(self, data):
 
-        sender, recipients, msg = data
+        client, ip, sender, recipients, msg = data
 
         subject = self.decode_header(msg['subject'])
 
         for recipient in recipients:
             if not is_email(recipient):
-                logger.error('{sender} => {recipient}: "{subject}"'.format(
-                    sender=sender, recipient=recipient, subject=subject))
+                logger.error('[{client}:{ip}] {sender} => {recipient}: "{subject}"'.format(
+                    client=client, ip=ip, sender=sender, recipient=recipient, subject=subject))
                 continue
 
-            logger.info('{sender} => {recipient}: "{subject}"'.format(
-                sender=sender, recipient=recipient, subject=subject))
+            logger.info('[{client}:{ip}] {sender} => {recipient}: "{subject}"'.format(
+                client=client, ip=ip, sender=sender, recipient=recipient, subject=subject))
 
             try:
                 domain = recipient.split('@')[-1]
                 answer = dns.resolver.query(domain, 'MX')
                 server = answer[0].exchange.to_text(omit_final_dot=True)
-                logger.debug('MX({recipient}) = {server}'.format(
+                logger.debug('[{client}:{ip}] MX({recipient}) = {server}'.format(
+                    client=client, ip=ip,
                     recipient=recipient,
-                    server=server
-                ))
+                    server=server))
             except Exception as err:
-                logger.error('Query MX({recipient}): {err}'.format(recipient=recipient, err=err))
+                logger.error('[{client}:{ip}] Query MX({recipient}): {err}'.format(
+                    client=client, ip=ip,
+                    recipient=recipient, err=err))
                 continue
 
             try:
@@ -59,7 +61,8 @@ class Worker:
                 mta.quit()
             except smtplib.SMTPException as err:
                 logger.error(
-                    'SMTP Error: {sender} => {recipient}: "{subject}"\nreason: {reason}'.format(
+                    '[{client}:{ip}] SMTP Error: {sender} => {recipient}: "{subject}"\nreason: {reason}'.format(
+                        client=client, ip=ip,
                         sender=sender,
                         recipient=recipient,
                         subject=subject,
@@ -69,5 +72,5 @@ class Worker:
                 logger.debug('============\n{mail}\n============'
                     .format(mail=self.brief_mail(msg)))
             except Exception as err:
-                logger.error('System Error: {err}'.format(err=err))
+                logger.error('[{client}:{ip}] System Error: {err}'.format(client=client, ip=ip, err=err))
 
