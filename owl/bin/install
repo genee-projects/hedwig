@@ -6,6 +6,6 @@ mkdir -p $TARGET_DIR/etc/hedwig
 
 sed "s#{{OWL_ADDR}}#$OWL_ADDR#g" /app/templates/docker-compose.yml > $TARGET_DIR/docker-compose.yml
 
-sed "s#{{NEST_ADDR}}#$NEST_ADDR#g" /app/templates/owl.conf.yml > $TARGET_DIR/etc/hedwig/owl.conf.yml
-sed "s#{{OWL_ID}}#$OWL_ID#g" /app/templates/owl.conf.yml > $TARGET_DIR/etc/hedwig/owl.conf.yml
-sed "s#{{OWL_SECRET}}#$OWL_SECRET#g" /app/templates/owl.conf.yml > $TARGET_DIR/etc/hedwig/owl.conf.yml
+sed -e "s#{{NEST_ADDR}}#$NEST_ADDR#g" \
+    -e "s#{{OWL_ID}}#$OWL_ID#g" \
+    -e "s#{{OWL_SECRET}}#$OWL_SECRET#g" /app/templates/owl.conf.yml > $TARGET_DIR/etc/hedwig/owl.conf.yml
