@@ -12,6 +12,7 @@ RUN cd /app/src && python3 setup.py install && rm -rf /app/src && rm -rf /root/.
 VOLUME ["/etc/hedwig"]
 EXPOSE 80
 
+WORKDIR /app
 ENV PATH=/app/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
     NEST_ADDR=80
 
