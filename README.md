@@ -52,25 +52,6 @@ hedwig (海德薇, 哈利波特的猫头鹰) 一个用来进行邮件发送队�
 
 ## 部署文档
 
-### hedwig-owl
-
-#### 安装依赖
-
-* docker
-* docker-compose (依赖 python, python-pip)
-
-#### 部署步骤
-
-```bash
-TARGET_DIR=/data/containers/hedwig-owl
-# 环境变量按照自己需要调整
-docker run --rm -v ${TARGET_DIR}:/target \
-	-v NEST_ADDR="172.17.0.1:8787" \
-	genee/hedwig-owl install
-cd ${TARGET_DIR} && docker-compose up -d
-```
-
-
 ### hedwig-nest
 
 #### 安装依赖
@@ -84,11 +65,30 @@ cd ${TARGET_DIR} && docker-compose up -d
 TARGET_DIR=/data/containers/hedwig-nest
 # 环境变量按照自己需要调整
 docker run --rm -v ${TARGET_DIR}:/target \
+	-v NEST_ADDR="172.17.0.1:8787" \
+	genee/hedwig-nest install
+cd ${TARGET_DIR} && docker-compose up -d
+```
+
+
+### hedwig-owl
+
+#### 安装依赖
+
+* docker
+* docker-compose (依赖 python, python-pip)
+
+#### 部署步骤
+
+```bash
+TARGET_DIR=/data/containers/hedwig-owl
+# 环境变量按照自己需要调整
+docker run --rm -v ${TARGET_DIR}:/target \
 	-v NEST_ADDR="http://robot.genee.cn" \
 	-v OWL_ID="XXXX" \
 	-v OWL_SECRET="XXXX" \
 	-v OWL_ADDR="172.17.0.1:25" \
-	genee/hedwig-nest install
+	genee/hedwig-owl install
 	
 cd ${TARGET_DIR} && docker-compose up -d
 
