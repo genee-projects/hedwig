@@ -23,7 +23,10 @@ class Worker:
         return msg.as_string()
 
     def decode_header(self, s):
-        return reduce(lambda _,x: x[0].decode(x[1], 'ignore') if type(x[0])==bytes else x[0], email.header.decode_header(s), '')
+        try:
+            return reduce(lambda _,x: x[0].decode(x[1], 'ignore') if type(x[0])==bytes and x[1] is not None else x[0], email.header.decode_header(s), '')
+        except Exception:
+            return s
 
     @gen.coroutine
     def put(self, data):
