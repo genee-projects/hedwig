@@ -65,7 +65,7 @@ hedwig (海德薇, 哈利波特的猫头鹰) 一个用来进行邮件发送队�
 TARGET_DIR=/data/containers/hedwig-nest
 # 环境变量按照自己需要调整
 docker run --rm -v ${TARGET_DIR}:/target \
-	-v NEST_ADDR="172.17.0.1:8787" \
+	-e NEST_ADDR="172.17.0.1:8787" \
 	genee/hedwig-nest install
 cd ${TARGET_DIR} && docker-compose up -d
 ```
@@ -84,10 +84,10 @@ cd ${TARGET_DIR} && docker-compose up -d
 TARGET_DIR=/data/containers/hedwig-owl
 # 环境变量按照自己需要调整
 docker run --rm -v ${TARGET_DIR}:/target \
-	-v NEST_ADDR="http://robot.genee.cn" \
-	-v OWL_ID="XXXX" \
-	-v OWL_SECRET="XXXX" \
-	-v OWL_ADDR="172.17.0.1:25" \
+	-e NEST_ADDR="http://robot.genee.cn" \
+	-e OWL_ID="XXXX" \
+	-e OWL_SECRET="XXXX" \
+	-e OWL_ADDR="172.17.0.1:25" \
 	genee/hedwig-owl install
 	
 cd ${TARGET_DIR} && docker-compose up -d
