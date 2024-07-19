@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 import sys
 import getopt
-import asyncore
 
 import email
 import email.header
 
-import smtpd
+import asyncio
+from aiosmtpd.controller import Controller
 import requests
 import yaml
 import json
@@ -15,17 +15,14 @@ from functools import reduce
 
 __version__ = '0.1.5'
 
-class Owl(smtpd.SMTPServer):
-    """
-    继承自smtpd.SMTPServer
-    用于把邮件发送请求按照 POST 请求发送到 robot.genee.cn
-    """
-
+class OwlHandler:
     def decode_header(self, s):
         return reduce(lambda _,x: x[0], email.header.decode_header(s), '')
 
-    # 收到邮件发送请求后, 进行邮件发送
-    def process_message(self, peer, mailfrom, rcpttos, data, **kwargs):
+    async def handle_DATA(self, server, session, envelope):
+        mailfrom = envelope.mail_from
+        rcpttos = envelope.rcpt_tos
+        data = envelope.content
 
         global config, logger
 
@@ -105,10 +102,11 @@ def main():
         logger.setLevel(logging.INFO)
 
     listen_config = config.get('listen', { 'host': '0.0.0.0', 'port': 25 })
-    owl = Owl((listen_config['host'], listen_config['port']), None)
+    handler = OwlHandler()
+    controller = Controller(handler, hostname=listen_config['host'], port=listen_config['port'])
+    controller.start()
     logger.info('Hedwig Owl is sitting on {host}:{port}...'.format(
         host=listen_config['host'], port=listen_config['port']))
-    asyncore.loop()
 
 if __name__ == "__main__":
     main()

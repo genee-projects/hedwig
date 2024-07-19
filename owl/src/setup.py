@@ -27,7 +27,7 @@ def find_version(*file_paths):
 owl_requires = [
     'PyYAML',
     'requests',
-    'pyasyncore'
+    'aiosmtpd'
 ]
 
 setup(
