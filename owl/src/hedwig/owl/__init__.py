@@ -57,16 +57,15 @@ class OwlHandler:
 
             # 不为 OK, raise exception
             r.raise_for_status()
+            return '250 OK'
 
         except requests.exceptions.RequestException as err:
-            logger.error(
-                'Error: {nest}: {reason}'.format(
+            messsage = 'Error: {nest}: {reason}'.format(
                     nest=nest,
                     reason=err
                 )
-            )
-
-        return None
+            logger.error(messsage)
+            return '500 ' + messsage
 
 
 def main():
