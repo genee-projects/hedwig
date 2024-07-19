@@ -105,7 +105,7 @@ def main():
             break
 
     with open(configFile, 'r') as f:
-        config = yaml.load(f)
+        config = yaml.safe_load(f)
 
     # 设定 Logging
     logging.basicConfig(format='[%(levelname)s] %(message)s')

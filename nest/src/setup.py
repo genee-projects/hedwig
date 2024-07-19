@@ -4,8 +4,7 @@ import os
 import re
 import sys
 
-from setuptools import find_packages
-from setuptools import setup
+from setuptools import find_packages, setup
 
 # disable ssl verify since it might failed during docker-build
 import ssl
@@ -28,7 +27,7 @@ def find_version(*file_paths):
 nest_requires = [
     'PyYAML',
     'tornado',
-    'dnspython3',
+    'dnspython',
     'pyIsEmail'
 ]
 

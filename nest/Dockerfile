@@ -1,13 +1,9 @@
-FROM alpine:3.3
+FROM alpine:3
 
-RUN apk add --no-cache python3 \
-    && python3 -m ensurepip \
-    && rm -r /usr/lib/python*/ensurepip \
-    && pip3 install --upgrade pip setuptools \
-    && rm -r /root/.cache
+RUN apk add --no-cache py3-setuptools
 
 ADD . /app
-RUN cd /app/src && python3 setup.py install && rm -rf /app/src && rm -rf /root/.cache
+RUN cd /app/src && python3 setup.py install && rm -rf /app/src
 
 VOLUME ["/etc/hedwig"]
 EXPOSE 80

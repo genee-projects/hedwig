@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 
 
-
-
 import email
 import email.header
 
@@ -16,6 +14,7 @@ from pyisemail import is_email
 from functools import reduce
 
 logger = logging.getLogger('hedwig.nest')
+
 
 class Worker:
 
@@ -57,10 +56,13 @@ class Worker:
                     client=client, ip=ip,
                     recipient=recipient, err=err))
                 continue
-
+            config = {}
             try:
                 mta = smtplib.SMTP(host=server, timeout=20)
-                mta.sendmail(from_addr=sender, to_addrs=recipient, msg=msg.as_string())
+                if 'user' in config and 'password' in config:
+                    mta.login(config['user'], config['password'])
+                mta.sendmail(from_addr=sender, to_addrs=recipient,
+                             msg=msg.as_string())
                 mta.quit()
             except smtplib.SMTPException as err:
                 logger.error(
@@ -73,7 +75,7 @@ class Worker:
                     )
                 )
                 logger.debug('============\n{mail}\n============'
-                    .format(mail=self.brief_mail(msg)))
+                             .format(mail=self.brief_mail(msg)))
             except Exception as err:
-                logger.error('[{client}:{ip}] System Error: {err}'.format(client=client, ip=ip, err=err))
-
+                logger.error('[{client}:{ip}] System Error: {err}'.format(
+                    client=client, ip=ip, err=err))
